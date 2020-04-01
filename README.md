@@ -2,7 +2,7 @@
 
 TODOs:
 - (X) Read plain Excel file.
-- Write plain Excel file.
+- (X) Write plain Excel file.
 - Read styled Excel file.
 - Write styled Excel file.
 - Add more styles:
@@ -11,6 +11,9 @@ TODOs:
     - Num format.
     - Alignment.
     - Border.
+- Error handling with failjure.
+- CI pipeline.
+- Property-based testing.
 - Support merged cells.
 - Support cond-style cells.
 - Support data-val cells.
