@@ -16,7 +16,9 @@
 (s/def ::style (s/keys))
 
 ;; Cell Value
-(s/def ::value (s/nilable (s/or :string string? :number number?)))
+(s/def ::value (s/nilable (s/or :string  string?
+                                :number  number?
+                                :boolean boolean?)))
 
 ;; Cell
 (s/def ::cell
