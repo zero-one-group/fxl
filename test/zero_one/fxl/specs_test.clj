@@ -34,6 +34,8 @@
     (valid? ::fs/value "abc") => true)
   (fact "Should allow nil"
     (valid? ::fs/value nil) => true)
+  (fact "Should allow bool"
+    (valid? ::fs/value false) => true)
   (fact "Should not allow collections"
     (invalid? ::fs/value (list 1 2 3)) => true))
 

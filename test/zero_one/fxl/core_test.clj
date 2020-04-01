@@ -1,18 +1,23 @@
 (ns zero-one.fxl.core-test
   (:require
     [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.core :refer [first-element]]))
+    [clojure.spec.alpha :as s]
+    [zero-one.fxl.specs :as fs]
+    [zero-one.fxl.core :as fxl]))
 
-(println "You should expect to see three failures below.")
+(facts "On fxl/->cell"
+  (fact "Should fill-in the blanks"
+    (fxl/->cell {}) => fxl/default-cell)
+  (fact "Should return valid cell from only coord"
+    (s/valid? ::fs/cell (fxl/->cell {:coord {:row 0 :col 0}})) => true)
+  (fact "Should return valid cell from only value"
+    (s/valid? ::fs/cell (fxl/->cell {:value "abc"})) => true)
+  (fact "Should return valid cell from only style"
+    (s/valid? ::fs/cell (fxl/->cell {:style {}})) => true))
 
-(facts "about `first-element`"
-  (fact "it normally returns the first element"
-    (first-element [1 2 3] :default) => 1
-    (first-element '(1 2 3) :default) => 1)
-
-  ;; I'm a little unsure how Clojure types map onto the Lisp I'm used to.
-  (fact "default value is returned for empty sequences"
-    (first-element [] :default) => :default
-    (first-element '() :default) => :default
-    (first-element nil :default) => :default
-    (first-element (filter even? [1 3 5]) :default) => :default))
+(facts "On fxl/read-xlsx"
+  (let [cells (fxl/read-xlsx "test/resources/dummy-spreadsheet.xlsx")]
+    (fact "Read cells should all be valid"
+      (filter #(not (s/valid? ::fs/cell %)) cells) => ())
+    (fact "There should be 23 cells"
+      (count cells) => 23)))

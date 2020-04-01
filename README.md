@@ -1,5 +1,20 @@
 # fxl
 
+TODOs:
+- (X) Read plain Excel file.
+- Write plain Excel file.
+- Read styled Excel file.
+- Write styled Excel file.
+- Add more styles:
+    - Font name, size, colour.
+    - Font: bold, italic, underline, strikethrough
+    - Num format.
+    - Alignment.
+    - Border.
+- Support merged cells.
+- Support cond-style cells.
+- Support data-val cells.
+
 The project uses [Midje](https://github.com/marick/Midje/).
 
 ## How to run the tests
