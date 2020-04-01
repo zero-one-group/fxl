@@ -39,8 +39,21 @@
 
 (facts "On fxl cells"
   (fact "Should allow example map"
-    (valid? ::fs/cell {:coord {:row 1 :col 1} :value "abc"}) => true)
+    (valid? ::fs/cell {:coord {:row 1 :col 1}
+                       :value "abc"
+                       :style {}})
+    => true)
   (fact "Should not allow incorrect coord"
-    (invalid? ::fs/cell {:coord {:row 1 :col "abc"} :value "abc"}) => true)
+    (invalid? ::fs/cell {:coord {:row 1 :col "abc"}
+                         :value "abc"
+                         :style {}})
+    => true)
   (fact "Should not allow incorrect value"
-    (invalid? ::fs/cell {:coord {:row 1 :col 2} :value [1 2]}) => true))
+    (invalid? ::fs/cell {:coord {:row 1 :col 2}
+                         :value [1 2]
+                         :style {}})
+    => true)
+  (fact "Should not allow missing style"
+    (invalid? ::fs/cell {:coord {:row 1 :col 2}
+                         :value [1 2]})
+    => true))

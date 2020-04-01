@@ -12,9 +12,12 @@
   (s/keys :req-un [::row ::col]
           :opt-un [::sheet]))
 
+;; Cell Style
+(s/def ::style (s/keys))
+
 ;; Cell Value
 (s/def ::value (s/nilable (s/or :string string? :number number?)))
 
 ;; Cell
 (s/def ::cell
-  (s/keys :req-un [::value ::coord]))
+  (s/keys :req-un [::value ::coord ::style]))
