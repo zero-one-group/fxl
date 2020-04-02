@@ -25,6 +25,10 @@
   (fact "Should not allow negative coords"
     (invalid? ::fs/coord {:row -1 :col 0}) => true))
 
+(facts "On fxl data formats"
+  (fact "Should allow example format"
+    (valid? ::fs/data-format "[h]:mm:ss") => true))
+
 (facts "On fxl font styles"
   (fact "Should allow example font style"
     (valid? ::fs/font-style {:bold        true

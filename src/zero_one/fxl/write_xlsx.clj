@@ -2,7 +2,8 @@
   (:require
     [zero-one.fxl.alignments :as alignments]
     [zero-one.fxl.borders :as borders]
-    [zero-one.fxl.colours :as colours])
+    [zero-one.fxl.colours :as colours]
+    [zero-one.fxl.data-formats :as data-formats])
   (:import
     [java.io FileOutputStream]
     [org.apache.poi.xssf.usermodel XSSFWorkbook]
@@ -47,8 +48,11 @@
       (.setTopBorderColor style (-> (:colour top-border :black) colours/colours .getIndex))
       (.setBorderTop style (borders/border-styles (:style top-border :none))))
     (when-let [background (-> cell :style :background-colour)]
-        (.setFillForegroundColor style (-> background colours/colours .getIndex))
-        (.setFillPattern style FillPatternType/SOLID_FOREGROUND))
+      (.setFillForegroundColor style (-> background colours/colours .getIndex))
+      (.setFillPattern style FillPatternType/SOLID_FOREGROUND))
+    (when-let [data-format (-> cell :style :data-format)]
+      (when-let [index (-> data-format data-formats/data-format-lookup)]
+        (.setDataFormat style index)))
     style))
 
 (defn- create-cell-font! [workbook cell]

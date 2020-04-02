@@ -33,6 +33,8 @@
       (contains?  styles {:bottom-border {:style :thin :colour :black1}}) => true)
     (fact "Alignment style should be extracted"
       (contains? styles {:vertical :center}) => true)
+    (fact "Data formats should be extracted"
+      (< 1 (->> styles (map :data-format) count)) => true)
     ;; TODO: background-colour seems to be undetected!
     (fact "Values should be extracted"
       (contains? values 1.4142) => true)))
@@ -54,8 +56,10 @@
                               :font-colour :red
                               :font-size   12
                               :font-name   "Arial"}}
-                     {:coord {:row 2 :col 0 :sheet "S2"} :value 3.14  :style {}}
-                     {:coord {:row 2 :col 1 :sheet "S2"} :value 2.71  :style {}}
+                     {:coord {:row 2 :col 0 :sheet "S2"} :value 3.14
+                      :style {:data-format "@"}}
+                     {:coord {:row 2 :col 1 :sheet "S2"} :value 2.71
+                      :style {:data-format "non-builtin"}}
                      {:coord {:row 3 :col 0 :sheet "S2"} :value true  :style {}}
                      {:coord {:row 3 :col 1 :sheet "S2"} :value false :style {}}]
         read-cells  (write-then-read-xlsx! write-cells)]
@@ -72,4 +76,10 @@
         (contains? bg-colours :yellow) => true))
     (fact "Font name should be preserved"
       (let [font-names (->> read-cells (map (comp :font-name :style)) set)]
-        (contains? font-names "Arial") => true))))
+        (contains? font-names "Arial") => true))
+    (fact "Data formats should be preserved"
+      (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
+        (contains? data-formats "@") => true))
+    (fact "Non-builtin data format should be dropped"
+      (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
+        (contains? data-formats "non-builtin") => false))))

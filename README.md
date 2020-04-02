@@ -10,13 +10,13 @@ TODOs:
     - (X) Border.
 - (X) Read styled Excel file.
 - (X) Write styled Excel file.
-- Error handling with failjure.
-- Add data formats.
-- Utility functions: easy transition to docjure and excel-clj.
+- (X) Add data formats.
 - CI pipeline: midje, joker, clj-kondo and cloverage.
 - README: what is fxl, example, installation and license.
 - Ship as a library.
 - Nice to haves:
+    - Utility functions: easy transition to docjure and excel-clj.
+    - Error handling with failjure.
     - Support to Google Sheet API.
     - Support merged cells.
     - Support data-val cells.
