@@ -9,7 +9,7 @@ TODOs:
     - (X) Alignment.
     - (X) Border.
 - (X) Read styled Excel file.
-- Write styled Excel file.
+- (X) Write styled Excel file.
 - Error handling with failjure.
 - Add data formats.
 - Utility functions: easy transition to docjure and excel-clj.
