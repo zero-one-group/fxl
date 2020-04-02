@@ -3,20 +3,23 @@
 TODOs:
 - (X) Read plain Excel file.
 - (X) Write plain Excel file.
+- (X) Add styles:
+    - (X) Font name, size, colour.
+    - (X) Font: bold, italic, underline, strikethrough
+    - (X) Alignment.
+    - (X) Border.
 - Read styled Excel file.
 - Write styled Excel file.
-- Add more styles:
-    - Font name, size, colour.
-    - Font: bold, italic, underline, strikethrough
-    - Num format.
-    - Alignment.
-    - Border.
 - Error handling with failjure.
-- CI pipeline.
-- Property-based testing.
-- Support merged cells.
-- Support cond-style cells.
-- Support data-val cells.
+- Utility functions: easy transition to docjure and excel-clj.
+- CI pipeline: midje, joker, clj-kondo and cloverage.
+- README: what is fxl, example, installation and license.
+- Ship as a library.
+- Nice to haves:
+    - Support to Google Sheet API.
+    - Support merged cells.
+    - Support data-val cells.
+    - Property-based testing.
 
 The project uses [Midje](https://github.com/marick/Midje/).
 

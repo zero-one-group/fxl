@@ -4,13 +4,14 @@
     [clojure.spec.alpha :as s]
     [midje.sweet :refer [facts fact =>]]
     [zero-one.fxl.specs :as fs]
-    [zero-one.fxl.core :as fxl])
+    [zero-one.fxl.core :as fxl]
+    [zero-one.fxl.defaults :as defaults])
   (:import
     [java.io File]))
 
 (facts "On fxl/->cell"
   (fact "Should fill-in the blanks"
-    (fxl/->cell {}) => fxl/default-cell)
+    (fxl/->cell {}) => defaults/cell)
   (fact "Should return valid cell from only coord"
     (s/valid? ::fs/cell (fxl/->cell {:coord {:row 0 :col 0}})) => true)
   (fact "Should return valid cell from only value"
@@ -19,11 +20,22 @@
     (s/valid? ::fs/cell (fxl/->cell {:style {}})) => true))
 
 (facts "On fxl/read-xlsx"
-  (let [cells (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")]
+  (let [cells  (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
+        values (->> cells (map :value) set)
+        styles (->> cells (map :style) set)]
     (fact "Read cells should all be valid"
       (filter #(not (s/valid? ::fs/cell %)) cells) => ())
     (fact "There should be 23 cells"
-      (count cells) => 23)))
+      (count cells) => 23)
+    (fact "Font style should be extracted"
+      (contains? styles {:font-size 14}) => true)
+    (fact "Border style should be extracted"
+      (contains?  styles {:bottom-border {:style :thin :colour :black1}}) => true)
+    (fact "Alignment style should be extracted"
+      (contains? styles {:vertical :center}) => true)
+    ;; TODO: background-colour seems to be undetected!
+    (fact "Values should be extracted"
+      (contains? values 1.4142) => true)))
 
 (defn write-then-read-xlsx! [cells]
   (let [temp-dir  (io/file (System/getProperty "java.io.tmpdir"))
