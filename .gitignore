@@ -1,5 +1,6 @@
 *.DS_Store*
 out.xlsx
+.clj-kondo/.cache
 
 pom.xml
 pom.xml.asc
