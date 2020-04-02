@@ -1,4 +1,3 @@
-;; TODO: available colours should be accessible here.
 (ns zero-one.fxl.core
   (:require
     [zero-one.fxl.alignments :as alignments]
@@ -7,7 +6,17 @@
     [zero-one.fxl.defaults :as defaults])
   (:import
     [java.io FileOutputStream]
-    [org.apache.poi.xssf.usermodel XSSFWorkbook]))
+    [org.apache.poi.xssf.usermodel XSSFWorkbook]
+    [org.apache.poi.ss.usermodel FillPatternType FontUnderline]))
+
+(def colour-set
+  (-> colours/colours keys set))
+(def border-style-set
+  (-> borders/border-styles keys set))
+(def horizontal-alignment-set
+  (-> alignments/horizontal-alignments keys set))
+(def vertical-alignment-set
+  (-> alignments/vertical-alignments keys set))
 
 (defn ->cell [maybe-cell]
   (merge maybe-cell defaults/cell))
@@ -72,7 +81,7 @@
                       (extract-cell-font-style workbook cell)
                       {:background-colour (-> cell
                                               .getCellStyle
-                                              .getFillBackgroundColor
+                                              .getFillForegroundColor
                                               colours/colours-lookup)})]
     (prune-cell-style cell-style)))
 
@@ -92,9 +101,11 @@
   (let [sheets (-> workbook .iterator iterator-seq)]
     (doall (mapcat #(extract-sheet-values workbook %) sheets))))
 
-;; TODO: need to close?
 (defn read-xlsx! [path]
-  (-> path XSSFWorkbook. extract-workbook-values))
+  (let [workbook (XSSFWorkbook. path)
+        cells    (extract-workbook-values workbook)]
+    (.close workbook)
+    cells))
 
 (defn- get-or-create-sheet! [cell workbook]
   (let [sheet-name (get-in cell [:coord :sheet] "Sheet1")]
@@ -116,18 +127,62 @@
     (double value)
     value))
 
-;; TODO: need to close?
+(defn- create-cell-style! [workbook cell]
+  (let [style (.createCellStyle workbook)]
+    (when-let [horizontal (-> cell :style :horizontal)]
+      (.setAlignment style (alignments/horizontal-alignments horizontal)))
+    (when-let [vertical (-> cell :style :vertical)]
+      (.setVerticalAlignment style (alignments/vertical-alignments vertical)))
+    (when-let [bottom-border (-> cell :style :bottom-border)]
+      (.setBottomBorderColor style (-> (:colour bottom-border :black) colours/colours .getIndex))
+      (.setBorderBottom style (borders/border-styles (:style bottom-border :none))))
+    (when-let [left-border (-> cell :style :left-border)]
+      (.setLeftBorderColor style (-> (:colour left-border :black) colours/colours .getIndex))
+      (.setBorderLeft style (borders/border-styles (:style left-border :none))))
+    (when-let [right-border (-> cell :style :right-border)]
+      (.setRightBorderColor style (-> (:colour right-border :black) colours/colours .getIndex))
+      (.setBorderRight style (borders/border-styles (:style right-border :none))))
+    (when-let [top-border (-> cell :style :top-border)]
+      (.setTopBorderColor style (-> (:colour top-border :black) colours/colours .getIndex))
+      (.setBorderTop style (borders/border-styles (:style top-border :none))))
+    (when-let [background (-> cell :style :background-colour)]
+        (.setFillForegroundColor style (-> background colours/colours .getIndex))
+        (.setFillPattern style FillPatternType/SOLID_FOREGROUND))
+    style))
+
+(defn- create-cell-font! [workbook cell]
+  (let [font (.createFont workbook)]
+    (when (-> cell :style :bold)
+      (.setBold font true))
+    (when (-> cell :style :italic)
+      (.setItalic font true))
+    (when (-> cell :style :underline)
+      (.setUnderline font FontUnderline/SINGLE))
+    (when (-> cell :style :strikeout)
+      (.setStrikeout font true))
+    (when-let [font-size (-> cell :style :font-size)]
+      (.setFontHeightInPoints font font-size))
+    (when-let [font-colour (-> cell :style :font-colour)]
+      (.setColor font (-> font-colour colours/colours .getIndex)))
+    (when-let [font-name (-> cell :style :font-name)]
+      (.setFontName font font-name))
+    font))
+
+;; TODO: Cache cell style and font whilst looping
 (defn write-xlsx! [cells path]
   (let [workbook (XSSFWorkbook.)]
     (doall
       (for [cell cells]
-        (as-> workbook ?
-             (get-or-create-sheet! cell ?)
-             (get-or-create-row! cell ?)
-             (get-or-create-cell! cell ?)
-             (.setCellValue ? (ensure-settable (:value cell))))))
-             ;; TODO: add style
-    (.write workbook (FileOutputStream. path))))
+        (let [sheet     (get-or-create-sheet! cell workbook)
+              row       (get-or-create-row! cell sheet)
+              poi-cell  (get-or-create-cell! cell row)
+              style     (create-cell-style! workbook cell)
+              font      (create-cell-font! workbook cell)]
+         (.setCellValue poi-cell (ensure-settable (:value cell)))
+         (.setFont style font)
+         (.setCellStyle poi-cell style))))
+    (.write workbook (FileOutputStream. path))
+    (.close workbook)))
 
 (comment
 
@@ -152,5 +207,7 @@
   (def cell (first cells))
   (def cell-style (.getCellStyle cell))
   (-> cell-style .getFillBackgroundColor colours/colours-lookup)
+  (def cells (read-xlsx! "test/resources/dummy-spreadsheet.xlsx"))
+  (map (comp :background-colour :style) cells)
 
   (println "end"))
