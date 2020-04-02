@@ -1,9 +1,9 @@
 (ns zero-one.fxl.specs
   (:require
     [clojure.spec.alpha :as s]
-    [zero-one.fxl.colours :refer [colours]]
     [zero-one.fxl.alignments :refer [horizontal-alignments vertical-alignments]]
-    [zero-one.fxl.borders :refer [border-styles]]))
+    [zero-one.fxl.borders :refer [border-styles]]
+    [zero-one.fxl.colours :refer [colours]]))
 
 ;; Coordinates
 (def max-rows (int 1e5))
@@ -53,6 +53,7 @@
                                        :border/top-border]))
 
 ;;;; Aggregated Style
+(s/def ::data-format string?)
 (s/def ::background-colour (-> colours keys set))
 (s/def ::style
   (s/merge ::font-style

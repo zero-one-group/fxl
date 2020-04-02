@@ -22,7 +22,8 @@
   :right-border      {:style :none, :colour :black},
   :top-border        {:style :none, :colour :black},
   ; Others
-  :background-colour :automatic})
+  :background-colour :automatic
+  :data-format       "General"})
 
 
 (def cell

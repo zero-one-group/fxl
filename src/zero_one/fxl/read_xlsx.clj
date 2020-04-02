@@ -68,7 +68,10 @@
                       {:background-colour (-> cell
                                               .getCellStyle
                                               .getFillForegroundColor
-                                              colours/colours-lookup)})]
+                                              colours/colours-lookup)
+                       :data-format       (-> cell
+                                              .getCellStyle
+                                              .getDataFormatString)})]
     (prune-cell-style cell-style)))
 
 (defn- extract-row-values [workbook row]
