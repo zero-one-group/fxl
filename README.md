@@ -8,9 +8,10 @@ TODOs:
     - (X) Font: bold, italic, underline, strikethrough
     - (X) Alignment.
     - (X) Border.
-- Read styled Excel file.
+- (X) Read styled Excel file.
 - Write styled Excel file.
 - Error handling with failjure.
+- Add data formats.
 - Utility functions: easy transition to docjure and excel-clj.
 - CI pipeline: midje, joker, clj-kondo and cloverage.
 - README: what is fxl, example, installation and license.

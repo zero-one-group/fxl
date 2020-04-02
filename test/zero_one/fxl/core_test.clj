@@ -44,14 +44,32 @@
     (fxl/read-xlsx! temp-file)))
 
 (facts "On fxl/write-xlsx"
-  (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234  :style {}}
-                     {:coord {:row 0 :col 1 :sheet "S1"} :value 5678  :style {}}
-                     {:coord {:row 1 :col 0 :sheet "S1"} :value "AB"  :style {}}
-                     {:coord {:row 1 :col 1 :sheet "S1"} :value "XY"  :style {}}
+  (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234  :style {:horizontal :fill}}
+                     {:coord {:row 0 :col 1 :sheet "S1"} :value 5678
+                      :style {:bottom-border {:style :dashed :colour :gold}}}
+                     {:coord {:row 1 :col 0 :sheet "S1"} :value "AB"
+                      :style {:background-colour :yellow}}
+                     {:coord {:row 1 :col 1 :sheet "S1"} :value "XY"
+                      :style {:bold        true
+                              :font-colour :red
+                              :font-size   12
+                              :font-name   "Arial"}}
                      {:coord {:row 2 :col 0 :sheet "S2"} :value 3.14  :style {}}
                      {:coord {:row 2 :col 1 :sheet "S2"} :value 2.71  :style {}}
                      {:coord {:row 3 :col 0 :sheet "S2"} :value true  :style {}}
                      {:coord {:row 3 :col 1 :sheet "S2"} :value false :style {}}]
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Write and read cells should have the same count"
-      (count read-cells) => (count write-cells))))
+      (count read-cells) => (count write-cells))
+    (fact "Alignment style should be preserved"
+      (let [horizontals (->> read-cells (map (comp :horizontal :style)) set)]
+        (contains? horizontals :fill) => true))
+    (fact "Border style should be preserved"
+      (let [borders (->> read-cells (map (comp :bottom-border :style)) set)]
+        (contains? borders {:style :dashed :colour :gold}) => true))
+    (fact "Background colour should be preserved"
+      (let [bg-colours (->> read-cells (map (comp :background-colour :style)) set)]
+        (contains? bg-colours :yellow) => true))
+    (fact "Font name should be preserved"
+      (let [font-names (->> read-cells (map (comp :font-name :style)) set)]
+        (contains? font-names "Arial") => true))))
