@@ -1,0 +1,65 @@
+(ns zero-one.fxl.colours
+  (:import
+    [org.apache.poi.ss.usermodel IndexedColors]))
+
+(def colours
+  {:aqua                  IndexedColors/AQUA
+   :automatic             IndexedColors/AUTOMATIC
+   :black                 IndexedColors/BLACK
+   :black1                IndexedColors/BLACK1
+   :blue                  IndexedColors/BLUE
+   :blue_grey             IndexedColors/BLUE_GREY
+   :blue1                 IndexedColors/BLUE1
+   :bright_green          IndexedColors/BRIGHT_GREEN
+   :bright_green1         IndexedColors/BRIGHT_GREEN1
+   :brown                 IndexedColors/BROWN
+   :coral                 IndexedColors/CORAL
+   :cornflower_blue       IndexedColors/CORNFLOWER_BLUE
+   :dark_blue             IndexedColors/DARK_BLUE
+   :dark_green            IndexedColors/DARK_GREEN
+   :dark_red              IndexedColors/DARK_RED
+   :dark_teal             IndexedColors/DARK_TEAL
+   :dark_yellow           IndexedColors/DARK_YELLOW
+   :gold                  IndexedColors/GOLD
+   :green                 IndexedColors/GREEN
+   :grey_25_percent       IndexedColors/GREY_25_PERCENT
+   :grey_40_percent       IndexedColors/GREY_40_PERCENT
+   :grey_50_percent       IndexedColors/GREY_50_PERCENT
+   :grey_80_percent       IndexedColors/GREY_80_PERCENT
+   :indigo                IndexedColors/INDIGO
+   :lavender              IndexedColors/LAVENDER
+   :lemon_chiffon         IndexedColors/LEMON_CHIFFON
+   :light_blue            IndexedColors/LIGHT_BLUE
+   :light_cornflower_blue IndexedColors/LIGHT_CORNFLOWER_BLUE
+   :light_green           IndexedColors/LIGHT_GREEN
+   :light_orange          IndexedColors/LIGHT_ORANGE
+   :light_turquoise       IndexedColors/LIGHT_TURQUOISE
+   :light_turquoise1      IndexedColors/LIGHT_TURQUOISE1
+   :light_yellow          IndexedColors/LIGHT_YELLOW
+   :lime                  IndexedColors/LIME
+   :maroon                IndexedColors/MAROON
+   :olive_green           IndexedColors/OLIVE_GREEN
+   :orange                IndexedColors/ORANGE
+   :orchid                IndexedColors/ORCHID
+   :pale_blue             IndexedColors/PALE_BLUE
+   :pink                  IndexedColors/PINK
+   :pink1                 IndexedColors/PINK1
+   :plum                  IndexedColors/PLUM
+   :red                   IndexedColors/RED
+   :red1                  IndexedColors/RED1
+   :rose                  IndexedColors/ROSE
+   :royal_blue            IndexedColors/ROYAL_BLUE
+   :sea_green             IndexedColors/SEA_GREEN
+   :sky_blue              IndexedColors/SKY_BLUE
+   :tan                   IndexedColors/TAN
+   :teal                  IndexedColors/TEAL
+   :turquoise             IndexedColors/TURQUOISE
+   :turquoise1            IndexedColors/TURQUOISE1
+   :violet                IndexedColors/VIOLET
+   :white                 IndexedColors/WHITE
+   :white1                IndexedColors/WHITE1
+   :yellow                IndexedColors/YELLOW
+   :yellow1               IndexedColors/YELLOW1})
+
+(def colours-lookup
+  (into {} (map (fn [[k v]] [(.getIndex v) k]) colours)))
