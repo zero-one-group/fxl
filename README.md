@@ -11,7 +11,7 @@ TODOs:
 - (X) Read styled Excel file.
 - (X) Write styled Excel file.
 - (X) Add data formats.
-- CI pipeline: midje, joker, clj-kondo and cloverage.
+- (X) CI pipeline: midje, joker, clj-kondo and cloverage.
 - README: what is fxl, example, installation and license.
 - Ship as a library.
 - Nice to haves:

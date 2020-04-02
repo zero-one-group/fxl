@@ -1,0 +1,25 @@
+image: zeroonetechnology/fxl:ci
+
+unit-test:
+  script:
+    - lein midje
+  only:
+    - merge_requests
+
+joker:
+  script:
+    - joker --lint --working-dir .
+  only:
+    - merge_requests
+
+kondo:
+  script:
+    - clj-kondo --lint src test
+  only:
+    - merge_requests
+
+test-coverage:
+  script:
+    - lein cloverage --fail-threshold 90
+  only:
+    - merge_requests
