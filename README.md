@@ -136,6 +136,10 @@ With a Clojure-map representation for cells, manipulating the spreadsheet is eas
 
 # Installation
 
+Add the following to your `project.clj` dependency:
+
+[![Clojars Project](https://clojars.org/zero.one/fxl/latest-version.svg)](http://clojars.org/zero.one/fxl)
+
 # Future Work
 
 Features:
