@@ -4,20 +4,9 @@
     [clojure.spec.alpha :as s]
     [midje.sweet :refer [facts fact =>]]
     [zero-one.fxl.specs :as fs]
-    [zero-one.fxl.core :as fxl]
-    [zero-one.fxl.defaults :as defaults])
+    [zero-one.fxl.core :as fxl])
   (:import
     [java.io File]))
-
-(facts "On fxl/->cell"
-  (fact "Should fill-in the blanks"
-    (fxl/->cell {}) => defaults/cell)
-  (fact "Should return valid cell from only coord"
-    (s/valid? ::fs/cell (fxl/->cell {:coord {:row 0 :col 0}})) => true)
-  (fact "Should return valid cell from only value"
-    (s/valid? ::fs/cell (fxl/->cell {:value "abc"})) => true)
-  (fact "Should return valid cell from only style"
-    (s/valid? ::fs/cell (fxl/->cell {:style {}})) => true))
 
 (facts "On fxl/read-xlsx"
   (let [cells  (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
@@ -46,7 +35,8 @@
     (fxl/read-xlsx! temp-file)))
 
 (facts "On fxl/write-xlsx"
-  (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234  :style {:horizontal :fill}}
+  (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234
+                      :style {:horizontal :fill}}
                      {:coord {:row 0 :col 1 :sheet "S1"} :value 5678
                       :style {:bottom-border {:style :dashed :colour :gold}}}
                      {:coord {:row 1 :col 0 :sheet "S1"} :value "AB"

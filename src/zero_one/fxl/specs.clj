@@ -1,6 +1,7 @@
 (ns zero-one.fxl.specs
   (:require
     [clojure.spec.alpha :as s]
+    [expound.alpha :as expound]
     [zero-one.fxl.alignments :refer [horizontal-alignments vertical-alignments]]
     [zero-one.fxl.borders :refer [border-styles]]
     [zero-one.fxl.colours :refer [colours]]))
@@ -69,3 +70,14 @@
 ;; Cell
 (s/def ::cell
   (s/keys :req-un [::value ::coord ::style]))
+
+;; Handy Functions
+(defn valid? [spec value]
+  (if (s/valid? spec value)
+    true
+    (do
+      (expound/expound spec value)
+      false)))
+
+(defn invalid? [spec value]
+  (not (s/valid? spec value)))

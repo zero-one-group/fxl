@@ -51,7 +51,7 @@
       (.setFillForegroundColor style (-> background colours/colours .getIndex))
       (.setFillPattern style FillPatternType/SOLID_FOREGROUND))
     (when-let [data-format (-> cell :style :data-format)]
-      (when-let [index (-> data-format data-formats/data-format-lookup)]
+      (when-let [index (data-formats/data-format-lookup data-format)]
         (.setDataFormat style index)))
     style))
 

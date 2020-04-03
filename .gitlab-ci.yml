@@ -6,15 +6,12 @@ unit-test:
   only:
     - merge_requests
 
-joker:
+linters:
   script:
-    - joker --lint --working-dir .
-  only:
-    - merge_requests
-
-kondo:
-  script:
+    - joker --lint --working-dir src
+    - joker --lint --working-dir test
     - clj-kondo --lint src test
+    - lein kibit
   only:
     - merge_requests
 
