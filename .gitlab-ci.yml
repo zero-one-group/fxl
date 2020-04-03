@@ -1,24 +1,30 @@
 image: zeroonetechnology/fxl:ci
 
 test:
+  stage: test
   script:
     - lein midje
   only:
+    - develop
     - merge_requests
 
 linters:
+  stage: test
   script:
     - joker --lint --working-dir src
     - joker --lint --working-dir test
     - clj-kondo --lint src test
     - lein kibit
   only:
+    - develop
     - merge_requests
 
 # Source: https://gitlab.com/gitlab-org/gitlab-runner/issues/3559
 coverage:
+  stage: test
   script:
     - lein cloverage --fail-threshold 90 | perl -pe 's/\e\[?.*?[\@-~]//g'
   coverage: /ALL\sFILES.*?\s+(\d+.\d+)/
   only:
+    - develop
     - merge_requests
