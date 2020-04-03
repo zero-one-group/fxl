@@ -1,6 +1,6 @@
 image: zeroonetechnology/fxl:ci
 
-unit-test:
+test:
   script:
     - lein midje
   only:
@@ -15,8 +15,10 @@ linters:
   only:
     - merge_requests
 
-test-coverage:
+# Source: https://gitlab.com/gitlab-org/gitlab-runner/issues/3559
+coverage:
   script:
-    - lein cloverage --fail-threshold 90
+    - lein cloverage --fail-threshold 90 | perl -pe 's/\e\[?.*?[\@-~]//g'
+  coverage: /ALL\sFILES.*?\s+(\d+.\d+)/
   only:
     - merge_requests
