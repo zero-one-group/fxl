@@ -17,6 +17,9 @@ continuous-integration: build
 		/bin/bash -c \
 		"echo 'Starting CI pipeline...' \
 		 && echo 'Running Tests...' && lein midje  \
-		 && echo 'Running Joker...' && joker --lint --working-dir . \
+		 && echo 'Running Joker...' \
+	     && joker --lint --working-dir src \
+		 && joker --lint --working-dir test \
 		 && echo 'Running Kondo...' && clj-kondo --lint src test \
+		 && echo 'Running Kibit...' && lein kibit src test \
 		 && echo 'Running Cloverage...' && lein cloverage --fail-threshold 90"
