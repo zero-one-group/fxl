@@ -1,12 +1,19 @@
-`fxl` */ˈfɪk.səl/* is a Clojure library for manipulating spreadsheets.
+<img src="logo/fxl.png" width="250px">
 
-WARNING! This library is still unstable. Some information here may be outdated. Do not use it in production just yet! See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) for more mature alternatives.
+[![pipeline status](https://gitlab.com/zero-one-open-source/fxl/badges/develop/pipeline.svg)](https://gitlab.com/zero-one-open-source/fxl/-/commits/develop)
+[![coverage report](https://gitlab.com/zero-one-open-source/fxl/badges/develop/coverage.svg)](https://gitlab.com/zero-one-open-source/fxl/-/commits/develop)
+
+WARNING! This library is still unstable. Some information here may be outdated. Do not use it in production just yet!
+
+See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) for more mature alternatives.
 
 [[_TOC_]]
 
 # Introduction
 
-The goal of `fxl` is to represent spreadsheets as a collection of maps.
+`fxl` */ˈfɪk.səl/* is a Clojure library for manipulating spreadsheets.
+
+The goal is to represent spreadsheets as a collection of maps.
 
 The library is written with simplicity in mind - particularly as discussed in Rich Hickey's talk [Simplicity Matters](https://www.youtube.com/watch?v=rI8tNMsozo0).
 
