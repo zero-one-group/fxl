@@ -8,7 +8,7 @@
  {; Fonts
   :bold              false,
   :italic            false,
-  :underline         true,
+  :underline         false,
   :strikeout         false
   :font-size         12,
   :font-name         "Calibri",

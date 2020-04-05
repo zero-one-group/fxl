@@ -1,7 +1,18 @@
 (ns zero-one.fxl.specs-test
   (:require
+    [clojure.string :refer [includes?]]
     [midje.sweet :refer [facts fact =>]]
     [zero-one.fxl.specs :as fs]))
+
+(facts "On valid? and invalid?"
+  (fact "Should give correct results"
+    (fs/valid? nat-int? 10) => true
+    (fs/invalid? nat-int? 10) => false
+    (fs/invalid? nat-int? -10) => true)
+  (fact "Should explain upon invalidity"
+    (let [error-msg (with-out-str (fs/valid? nat-int? -10))]
+      (string? error-msg) => true
+      (includes? error-msg "Spec failed") => true)))
 
 (facts "On fxl coordinates"
   (fact "Should allow example map"
