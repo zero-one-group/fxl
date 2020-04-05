@@ -5,7 +5,8 @@
     [zero-one.fxl.colours :as colours]
     [zero-one.fxl.defaults :as defaults])
   (:import
-    [org.apache.poi.xssf.usermodel XSSFWorkbook]))
+    [org.apache.poi.xssf.usermodel XSSFWorkbook]
+    [org.apache.poi.ss.usermodel Font]))
 
 (defn- extract-cell-value [cell]
   (let [cell-type (.. cell getCellType name)]
@@ -49,7 +50,7 @@
     {:bold        (.getBold font)
      :italic      (.getItalic font)
      :strikeout   (.getStrikeout font)
-     :underline   (boolean (.getUnderline font))
+     :underline   (not= (.getUnderline font) Font/U_NONE)
      :font-name   (.getFontName font)
      :font-colour (-> font .getColor colours/colours-lookup)
      :font-size   (.getFontHeightInPoints font)}))
@@ -74,25 +75,25 @@
                                               .getDataFormatString)})]
     (prune-cell-style cell-style)))
 
-(defn- extract-row-values [workbook row]
-  (for [cell (-> row .iterator iterator-seq)]
-    {:coord {:row   (.getRowNum row)
-             :col   (.getColumnIndex cell)
-             :sheet (.. row getSheet getSheetName)}
-      :value (extract-cell-value cell)
-      :style (extract-cell-style workbook cell)}))
+(defn- extract-poi-cells [workbook]
+  (letfn [(->seq [iterable] (-> iterable .iterator iterator-seq))]
+    (->> workbook
+         ->seq
+         (mapcat ->seq)
+         (mapcat ->seq))))
 
-(defn- extract-sheet-values [workbook sheet]
-  (let [rows       (-> sheet .iterator iterator-seq)]
-    (doall (mapcat #(extract-row-values workbook %) rows))))
-
-(defn- extract-workbook-values [workbook]
-  (let [sheets (-> workbook .iterator iterator-seq)]
-    (doall (mapcat #(extract-sheet-values workbook %) sheets))))
+(defn- poi-cell->fxl-cell [workbook poi-cell]
+  (let [poi-row (.getRow poi-cell)]
+    {:coord {:row   (.getRowNum poi-row)
+             :col   (.getColumnIndex poi-cell)
+             :sheet (.. poi-row getSheet getSheetName)}
+      :value (extract-cell-value poi-cell)
+      :style (extract-cell-style workbook poi-cell)}))
 
 (defn read-xlsx! [path]
-  (let [workbook (XSSFWorkbook. path)
-        cells    (extract-workbook-values workbook)]
+  (let [workbook  (XSSFWorkbook. path)
+        poi-cells (extract-poi-cells workbook)
+        cells     (map #(poi-cell->fxl-cell workbook %) poi-cells)]
     (.close workbook)
     cells))
 

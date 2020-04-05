@@ -35,6 +35,8 @@
   (let [cells (map fxl/->cell [{:value "abc" :coord {:row 0 :col 0}}
                                {:value "xyz" :coord {:row 4 :col 4}}])]
     (fact "Correct fxl/concat-right"
+      (fxl/concat-right) => nil
+      (fxl/concat-right cells) => cells
       (let [concatted (fxl/concat-right cells cells)]
         (fxl/->max-row concatted) => 4
         (fxl/->max-col concatted) => 9))
@@ -44,6 +46,8 @@
         (fxl/->max-row concatted) => 4
         (fxl/->max-col concatted) => 19))
     (fact "Multi-arity fxl/concat-below works"
+      (fxl/concat-below) => nil
+      (fxl/concat-below cells) => cells
       (let [concatted (fxl/concat-below cells cells cells)]
         (count concatted) => 6
         (fxl/->max-row concatted) => 14
@@ -52,12 +56,19 @@
 (facts "On pad functions"
   (let [cells (map fxl/->cell [{:value 123 :coord {:row 5 :col 5}}
                                {:value 456 :coord {:row 2 :col 2}}])]
+    (fact "Pad functions should handle degenerate case"
+      (-> (fxl/pad-right nil) first :coord) => {:row 0 :col 0}
+      (-> (fxl/pad-below nil) first :coord) => {:row 0 :col 0})
     (fact "Correct fxl/pad-right"
       (fxl/->max-row (fxl/pad-right cells)) => 5
-      (fxl/->max-col (fxl/pad-right cells)) => 6)
+      (fxl/->max-col (fxl/pad-right cells)) => 6
+      (fxl/->max-row (fxl/pad-right 10 cells)) => 5
+      (fxl/->max-col (fxl/pad-right 10 cells)) => 15)
     (fact "Correct fxl/pad-below"
       (fxl/->max-row (fxl/pad-below cells)) => 6
-      (fxl/->max-col (fxl/pad-below cells)) => 5)))
+      (fxl/->max-col (fxl/pad-below cells)) => 5
+      (fxl/->max-row (fxl/pad-below 13 cells)) => 18
+      (fxl/->max-col (fxl/pad-below 13 cells)) => 5)))
 
 (facts "On fxl/row->cells"
   (let [row   (range 10)
@@ -91,3 +102,31 @@
       (->> cells (map (comp :row :coord)) set) => #{0 1})
     (fact "There should be two cols"
       (->> cells (map (comp :col :coord)) set) => #{0 1})))
+
+(facts "On fxl/records->table and fxl/records->cells"
+  (let [records [{:item "Rent" :cost 1000}
+                 {:item "Gas"  :cost 100}
+                 {:item "Food" :cost 300}
+                 {:item "Gym"  :cost 50}]
+        table (fxl/records->table [:item :cost] records)
+        cells (fxl/records->cells [:item :cost] records)]
+    (fact "Correct conversions with keys"
+      table => [["Rent" 1000]
+                ["Gas"  100]
+                ["Food" 300]
+                ["Gym"  50]]
+      (fxl/->max-row cells) => 3
+      (fxl/->max-col cells) => 1))
+  (let [records [{:item "Rent" :cost 1000}
+                 {:item "Gas"  :cost 100 :description "abc"}
+                 {:item "Food" :cost 300}
+                 {:item "Gym"  :cost 50  :comment "xyz"}]
+        table (fxl/records->table records)
+        cells (fxl/records->cells records)]
+    (fact "Correct conversions without keys"
+      table =>  [["Rent" 1000 nil   nil]
+                 ["Gas"  100  "abc" nil]
+                 ["Food" 300  nil   nil]
+                 ["Gym"  50   nil   "xyz"]]
+      (fxl/->max-row cells) => 3
+      (fxl/->max-col cells) => 3)))

@@ -9,17 +9,25 @@
 (def header-cells (fxl/row->cells ["Item" "Cost"]))
 
 (def body-cells
-  (fxl/table->cells (map #(list (:item %) (:cost %)) costs)))
+  (fxl/records->cells [:item :cost] costs))
 
 (def total-cells
   (let [total-cost (apply + (map :cost costs))]
     (fxl/row->cells ["Total" total-cost])))
 
-(def highlight-style {:bold true :background-colour :grey_25_percent})
+(defn bold [cell]
+  (assoc-in cell [:style :bold] true))
+
+(defn highlight [cell]
+  (assoc-in cell [:style :background-colour] :grey_25_percent))
+
+(defn align-center [cell]
+  (assoc-in cell [:style :horizontal] :center))
 
 (fxl/write-xlsx!
-  (fxl/concat-below
-    (map #(assoc % :style highlight-style) header-cells)
-    (fxl/pad-below body-cells)
-    (map #(assoc % :style highlight-style) total-cells))
+  (map align-center
+    (fxl/concat-below
+      (map (comp bold highlight) header-cells)
+      (fxl/pad-below body-cells)
+      (map bold total-cells)))
   "examples/spreadsheets/write_to_plain_excel_with_helpers.xlsx")

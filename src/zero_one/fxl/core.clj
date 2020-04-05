@@ -7,12 +7,24 @@
     [zero-one.fxl.read-xlsx :as read-xlsx]
     [zero-one.fxl.write-xlsx :as write-xlsx]))
 
+;; Utility Functions
 (defn ->cell [maybe-cell]
   (merge defaults/cell maybe-cell))
+
+(defn ->max-col [cells]
+  (->> cells
+       (map (comp :col :coord))
+       (apply max -1)))
+
+(defn ->max-row [cells]
+  (->> cells
+       (map (comp :row :coord))
+       (apply max -1)))
 
 (defn zip-with-index [coll]
   (map vector (range) coll))
 
+;; Helper Functions: Ordered -> Unordered
 (defn row->cells [row]
   (for [[index elem] (zip-with-index row)]
     {:value elem :coord {:row 0 :col index} :style {}}))
@@ -27,6 +39,18 @@
       (for [[col-index elem] (zip-with-index row)]
         {:value elem :coord {:row row-index :col col-index} :style {}}))))
 
+
+(defn records->table
+  ([records]
+   (let [ks (distinct (mapcat keys records))]
+     (records->table ks records)))
+  ([ks records] (map #(map % ks) records)))
+
+(defn records->cells
+  ([records] (table->cells (records->table records)))
+  ([ks records] (table->cells (records->table ks records))))
+
+;; Helper Functions: Relative Coords
 (defn- shift-cell [dir shift cell]
   (let [old-index (get-in cell [:coord dir])
         new-index (max 0 (+ old-index shift))]
@@ -44,11 +68,6 @@
 (defn shift-up [shift cell]
   (shift-cell :row (- shift) cell))
 
-(defn ->max-col [cells]
-  (->> cells
-       (map (comp :col :coord))
-       (apply max)))
-
 (defn concat-right
   ([] nil)
   ([cells] cells)
@@ -59,13 +78,12 @@
   ([l-cells r-cells & tail]
    (reduce concat-right (concat-right l-cells r-cells) tail)))
 
-(defn pad-right [cells]
-  (concat-right cells [(->cell {})]))
-
-(defn ->max-row [cells]
-  (->> cells
-       (map (comp :row :coord))
-       (apply max)))
+(defn pad-right
+  ([cells] (pad-right 1 cells))
+  ([shift cells]
+   (concat-right
+     cells
+     [(->cell {:coord {:row 0 :col (dec shift)} :style {}})])))
 
 (defn concat-below
   ([] nil)
@@ -77,9 +95,14 @@
   ([l-cells r-cells & tail]
    (reduce concat-below (concat-below l-cells r-cells) tail)))
 
-(defn pad-below [cells]
-  (concat-below cells [(->cell {:style {}})]))
+(defn pad-below
+  ([cells] (pad-below 1 cells))
+  ([shift cells]
+   (concat-below
+     cells
+     [(->cell {:coord {:row (dec shift) :col 0} :style {}})])))
 
+;; Style Options
 (def colour-set
   (-> colours/colours keys set))
 
@@ -92,6 +115,7 @@
 (def vertical-alignment-set
   (-> alignments/vertical-alignments keys set))
 
+;; IO Functions
 (def read-xlsx! read-xlsx/read-xlsx!)
 
 (def write-xlsx! write-xlsx/write-xlsx!)

@@ -2,6 +2,7 @@
 
 [![pipeline status](https://gitlab.com/zero-one-open-source/fxl/badges/develop/pipeline.svg)](https://gitlab.com/zero-one-open-source/fxl/-/commits/develop)
 [![coverage report](https://gitlab.com/zero-one-open-source/fxl/badges/develop/coverage.svg)](https://gitlab.com/zero-one-open-source/fxl/-/commits/develop)
+[![Clojars Project](https://img.shields.io/clojars/v/zero.one/fxl.svg)](http://clojars.org/zero.one/fxl)
 
 WARNING! This library is still unstable. Some information here may be outdated. Do not use it in production just yet!
 
@@ -120,18 +121,32 @@ Here we use `row->cells`, `table->cells`, `pad-below` and `concat-below` to help
 
 More helper functions are available - see [here](https://gitlab.com/zero-one-open-source/fxl/-/blob/develop/src/zero_one/fxl/core.clj).
 
-## Creating Independent Styles
+## Modular Styling
 
-With a Clojure-map representation for cells, manipulating the spreadsheet is easy using built-in functions. Suppose we would like to highlight the header and the total row:
+With a Clojure-map representation for cells, manipulating the spreadsheet is easy using built-in functions. Suppose we would like to:
+
+1. highlight the header row and make it bold
+2. make the total row bold
+2. horizontally align all cells to the center
+
+We can achieve this by composing simple styling functions:
 
 ``` clojure
-(def hl-style {:bold true :background-colour :grey_25_percent})
+(defn bold [cell]
+  (assoc-in cell [:style :bold] true))
+
+(defn highlight [cell]
+  (assoc-in cell [:style :background-colour] :grey_25_percent))
+
+(defn align-center [cell]
+  (assoc-in cell [:style :horizontal] :center))
 
 (def all-cells
-  (fxl/concat-below
-    (map #(assoc % :style hl-style) header-cells)
-    (fxl/pad-below body-cells)
-    (map #(assoc % :style hl-style) total-cells))
+  (map align-center
+    (fxl/concat-below
+      (map (comp bold highlight) header-cells)
+      (fxl/pad-below body-cells)
+      (map bold total-cells))))
 ```
 
 # Installation
@@ -143,11 +158,15 @@ Add the following to your `project.clj` dependency:
 # Future Work
 
 Features:
-- Utility functions for easy transition to `docjure` and `excel-clj`.
-- Error handling with `failjure`.
+- Core:
+    - Column width and row heights.
+    - Freezing panes.
+    - Excel coords -> index coords.
+    - Support for formulae.
+    - Support merged cells.
+    - Support data-val cells.
 - Support to Google Sheet API.
-- Support merged cells.
-- Support data-val cells.
+- Error handling with `failjure`.
 - Property-based testing.
 
 # License
