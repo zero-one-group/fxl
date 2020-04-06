@@ -23,7 +23,7 @@ linters:
 coverage:
   stage: test
   script:
-    - lein cloverage --fail-threshold 90 | perl -pe 's/\e\[?.*?[\@-~]//g'
+    - lein cloverage --fail-threshold 90 --ns-exclude-regex zero-one.fxl.specs | perl -pe 's/\e\[?.*?[\@-~]//g'
   coverage: /ALL\sFILES.*?\s+(\d+.\d+)/
   only:
     - develop
