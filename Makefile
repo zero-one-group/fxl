@@ -22,4 +22,4 @@ continuous-integration: build
 		 && joker --lint --working-dir test \
 		 && echo 'Running Kondo...' && clj-kondo --lint src test \
 		 && echo 'Running Kibit...' && lein kibit src test \
-		 && echo 'Running Cloverage...' && lein cloverage --fail-threshold 90"
+		 && echo 'Running Cloverage...' && lein cloverage --fail-threshold 90 --ns-exclude-regex zero-one.fxl.specs"

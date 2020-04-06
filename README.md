@@ -12,7 +12,7 @@ See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.co
 
 # Introduction
 
-`fxl` */ˈfɪk.səl/* is a Clojure library for manipulating spreadsheets.
+`fxl` (*/ˈfɪk.səl/* or "pixel" with an f) is a Clojure library for manipulating spreadsheets.
 
 The goal is to represent spreadsheets as a collection of maps.
 
@@ -106,7 +106,7 @@ Here we use `row->cells`, `table->cells`, `pad-below` and `concat-below` to help
 (def header-cells (fxl/row->cells ["Item" "Cost"]))
 
 (def body-cells
-  (fxl/table->cells (map #(list (:item %) (:cost %)) costs)))
+  (fxl/records->cells [:item :cost] costs))
 
 (def total-cells
   (let [total-cost (apply + (map :cost costs))]
