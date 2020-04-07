@@ -1,4 +1,4 @@
-image: zeroonetechnology/fxl:ci
+image: zeroonetechnology/fxl:latest
 
 test:
   stage: test
@@ -11,8 +11,6 @@ test:
 linters:
   stage: test
   script:
-    - joker --lint --working-dir src
-    - joker --lint --working-dir test
     - clj-kondo --lint src test
     - lein kibit
   only:
