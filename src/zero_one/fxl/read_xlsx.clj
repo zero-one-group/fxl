@@ -1,5 +1,6 @@
 (ns zero-one.fxl.read-xlsx
   (:require
+    [failjure.core :as f]
     [zero-one.fxl.alignments :as alignments]
     [zero-one.fxl.borders :as borders]
     [zero-one.fxl.colours :as colours]
@@ -90,12 +91,15 @@
       :value (extract-cell-value poi-cell)
       :style (extract-cell-style workbook poi-cell)}))
 
-(defn read-xlsx! [path]
+(defn- throwable-read-xlsx! [path]
   (let [workbook  (XSSFWorkbook. path)
         poi-cells (extract-poi-cells workbook)
         cells     (map #(poi-cell->fxl-cell workbook %) poi-cells)]
     (.close workbook)
     cells))
+
+(defn read-xlsx! [path]
+  (f/try* (throwable-read-xlsx! path)))
 
 (comment
 

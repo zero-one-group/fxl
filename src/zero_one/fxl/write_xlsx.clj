@@ -1,9 +1,11 @@
 (ns zero-one.fxl.write-xlsx
   (:require
+    [failjure.core :as f]
     [zero-one.fxl.alignments :as alignments]
     [zero-one.fxl.borders :as borders]
     [zero-one.fxl.colours :as colours]
-    [zero-one.fxl.data-formats :as data-formats])
+    [zero-one.fxl.data-formats :as data-formats]
+    [zero-one.fxl.specs :as fs])
   (:import
     [java.io FileOutputStream]
     [org.apache.poi.xssf.usermodel XSSFWorkbook]
@@ -74,7 +76,7 @@
     font))
 
 ;; TODO: Cache cell style and font whilst looping
-(defn write-xlsx! [cells path]
+(defn- throwable-write-xlsx! [cells path]
   (let [workbook (XSSFWorkbook.)]
     (doall
       (for [cell cells]
@@ -88,3 +90,14 @@
          (.setCellStyle poi-cell style))))
     (.write workbook (FileOutputStream. path))
     (.close workbook)))
+
+(defn conform-cells [cells]
+  (if (every? #(fs/valid? ::fs/cell %) cells)
+    cells
+    (f/fail "Invalid cell specs.")))
+
+
+(defn write-xlsx! [cells path]
+  (f/attempt-all [cells  (conform-cells cells)
+                  result (f/try* (throwable-write-xlsx! cells path))]
+    result))

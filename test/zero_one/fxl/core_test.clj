@@ -23,7 +23,7 @@
     (fact "Alignment style should be extracted"
       (contains? styles {:vertical :center}) => true)
     (fact "Data formats should be extracted"
-      (< 1 (->> styles (map :data-format) count)) => true)
+      (->> styles (map :data-format) count) => #(< 1 %))
     ;; TODO: background-colour seems to be undetected!
     (fact "Values should be extracted"
       (contains? values 1.4142) => true)))
@@ -93,8 +93,8 @@
     (fact "Non-builtin data format should be dropped"
       (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
         (contains? data-formats "non-builtin") => false)))
-  (let [write-cells [{:coord {:row 0 :col 0} :value 12345}
-                     {:coord {:row 0 :col 0} :value "abc"}]
+  (let [write-cells [{:coord {:row 0 :col 0} :value 12345 :style {}}
+                     {:coord {:row 0 :col 0} :value "abc" :style {}}]
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Overwrite cells should work correctly"
       (count read-cells) => 1

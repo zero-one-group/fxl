@@ -1,1 +1,2 @@
-{:skip-comments true}
+{:skip-comments true
+ :lint-as {failjure.core/attempt-all clojure.core/let}}
