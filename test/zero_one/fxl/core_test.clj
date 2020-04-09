@@ -6,7 +6,8 @@
     [zero-one.fxl.specs :as fs]
     [zero-one.fxl.core :as fxl])
   (:import
-    [java.io File]))
+    [java.io File FileOutputStream]
+    [org.apache.poi.xssf.usermodel XSSFWorkbook]))
 
 (facts "On fxl/read-xlsx"
   (let [cells  (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
@@ -28,13 +29,20 @@
     (fact "Values should be extracted"
       (contains? values 1.4142) => true)))
 
+(defn create-temp-file! []
+  (let [temp-dir  (io/file (System/getProperty "java.io.tmpdir"))]
+    (File/createTempFile "temporary" ".xlsx" temp-dir)))
+
 (defn write-then-read-xlsx! [cells]
-  (let [temp-dir  (io/file (System/getProperty "java.io.tmpdir"))
-        temp-file (File/createTempFile "temporary" ".xlsx" temp-dir)]
+  (let [temp-file (create-temp-file!)]
     (fxl/write-xlsx! cells temp-file)
     (fxl/read-xlsx! temp-file)))
 
 (facts "On fxl/write-xlsx"
+  (let [write-result (fxl/write-xlsx! [] (create-temp-file!))]
+    (fact "Should return a workbook and an output stream"
+      (:workbook write-result) => #(instance? XSSFWorkbook %)
+      (:output-stream write-result) => #(instance? FileOutputStream %)))
   (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234
                       :style {:horizontal :fill :vertical :justify}}
                      {:coord {:row 0 :col 1 :sheet "S1"} :value 5678

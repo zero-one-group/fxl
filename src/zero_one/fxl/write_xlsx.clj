@@ -77,7 +77,8 @@
 
 ;; TODO: Cache cell style and font whilst looping
 (defn- throwable-write-xlsx! [cells path]
-  (let [workbook (XSSFWorkbook.)]
+  (let [workbook      (XSSFWorkbook.)
+        output-stream (FileOutputStream. path)]
     (doall
       (for [cell cells]
         (let [sheet     (get-or-create-sheet! cell workbook)
@@ -88,14 +89,14 @@
          (.setCellValue poi-cell (ensure-settable (:value cell)))
          (.setFont style font)
          (.setCellStyle poi-cell style))))
-    (.write workbook (FileOutputStream. path))
-    (.close workbook)))
+    (.write workbook output-stream)
+    (.close workbook)
+    {:workbook workbook :output-stream output-stream}))
 
 (defn conform-cells [cells]
   (if (every? #(fs/valid? ::fs/cell %) cells)
     cells
     (f/fail "Invalid cell specs.")))
-
 
 (defn write-xlsx! [cells path]
   (f/attempt-all [cells  (conform-cells cells)
