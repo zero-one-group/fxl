@@ -1,5 +1,6 @@
 (ns zero-one.fxl.core
   (:require
+    [clojure.math.combinatorics :refer [cartesian-product]]
     [zero-one.fxl.alignments :as alignments]
     [zero-one.fxl.borders :as borders]
     [zero-one.fxl.colours :as colours]
@@ -38,7 +39,6 @@
     (for [[row-index row] (zip-with-index table)]
       (for [[col-index elem] (zip-with-index row)]
         {:value elem :coord {:row row-index :col col-index} :style {}}))))
-
 
 (defn records->table
   ([records]
@@ -101,6 +101,25 @@
    (concat-below
      cells
      [(->cell {:coord {:row (dec shift) :col 0} :style {}})])))
+
+(defn pad-table [cells]
+  (let [coords    (->> cells (map :coord) set)
+        indices   (cartesian-product
+                    (-> cells max-row inc range)
+                    (-> cells max-col inc range))
+        pad-cells (for [[row col] indices
+                        :let  [coord {:row row :col col}]
+                        :when (not (contains? coords coord))]
+                    {:value nil :coord coord :style {}})]
+    (concat cells pad-cells)))
+
+;; Style Utilities
+(defn restyle-borders [cell border-style]
+  (-> cell
+      (assoc-in [:style :bottom-border] border-style)
+      (assoc-in [:style :left-border] border-style)
+      (assoc-in [:style :right-border] border-style)
+      (assoc-in [:style :top-border] border-style)))
 
 ;; Style Options
 (def colour-set

@@ -1,7 +1,9 @@
 (ns zero-one.fxl.write-xlsx-test
   (:require
     [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.write-xlsx :as write-xlsx]))
+    [zero-one.fxl.write-xlsx :as write-xlsx])
+  (:import
+    (org.apache.poi.xssf.usermodel XSSFWorkbook)))
 
 (def example-cells
   [{:value "X" :coord {:row 0 :col 0} :style {:row-size 1 :col-size 9}}
@@ -15,10 +17,14 @@
    {:value nil :coord {:row 2 :col 2} :style {:col-size :auto}}])
 
 (facts "On write-xlsx/build-context"
-  (let [context (write-xlsx/spreadsheet-context example-cells)]
+  (let [workbook (XSSFWorkbook.)
+        context  (write-xlsx/build-context! workbook example-cells)]
     (fact "Correct minimum row and col sizes"
-      context => {:min-row-sizes {0 2
-                                  1 6}
-                  :min-col-sizes {0 9
-                                  1 8
-                                  2 :auto}})))
+      (:min-row-sizes context) => {{:row 0 :sheet "Sheet1"} 2
+                                   {:row 1 :sheet "Sheet1"} 6}
+      (:min-col-sizes context) => {{:col 0 :sheet "Sheet1"} 9
+                                   {:col 1 :sheet "Sheet1"} 8
+                                   {:col 2 :sheet "Sheet1"} :auto})
+    (fact "Correct style caching"
+      (let [unique-styles (->> example-cells (map :style) set)]
+        (-> context :cell-styles keys set) => unique-styles))))

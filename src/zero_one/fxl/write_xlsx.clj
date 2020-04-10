@@ -5,14 +5,16 @@
     [zero-one.fxl.borders :as borders]
     [zero-one.fxl.colours :as colours]
     [zero-one.fxl.data-formats :as data-formats]
+    [zero-one.fxl.defaults :as defaults]
     [zero-one.fxl.specs :as fs])
   (:import
-    [java.io FileOutputStream]
-    [org.apache.poi.xssf.usermodel XSSFWorkbook]
-    [org.apache.poi.ss.usermodel FillPatternType FontUnderline]))
+    (java.io FileOutputStream)
+    (org.apache.poi.xssf.usermodel XSSFWorkbook)
+    (org.apache.poi.ss.usermodel FillPatternType FontUnderline)))
 
+;; Apache POI Navigation
 (defn- get-or-create-sheet! [cell workbook]
-  (let [sheet-name (get-in cell [:coord :sheet] "Sheet1")]
+  (let [sheet-name (get-in cell [:coord :sheet] defaults/sheet)]
     (or (.getSheet workbook sheet-name)
         (.createSheet workbook sheet-name))))
 
@@ -31,6 +33,7 @@
     (double value)
     value))
 
+;; Cell Style and Font
 (defn- create-cell-style! [workbook cell]
   (let [style (.createCellStyle workbook)]
     (when-let [horizontal (-> cell :style :horizontal)]
@@ -75,6 +78,16 @@
       (.setFontName font font-name))
     font))
 
+(defn- accumulate-style-cache! [workbook current-cache cell]
+  (let [fxl-style (:style cell)]
+    (if (contains? current-cache fxl-style)
+      current-cache
+      (let [poi-style (create-cell-style! workbook cell)
+            poi-font  (create-cell-font! workbook cell)]
+        (.setFont poi-style poi-font)
+        (assoc current-cache fxl-style poi-style)))))
+
+;; Row and Column Sizing
 (defn- min-size [axis cells]
   (let [coord-key ({:row :row-size :col :col-size} axis)
         sizes     (->> cells
@@ -84,41 +97,55 @@
       :auto
       (apply max -1 sizes))))
 
+(defn- partial-coord [axis cell]
+  {:sheet (get-in cell [:coord :sheet] defaults/sheet)
+   axis   (get-in cell [:coord axis])})
+
 (defn- grouped-min-size [axis cells]
-  (let [grouped-cells (group-by (comp axis :coord) cells)]
+  (let [grouped-cells (group-by #(partial-coord axis %) cells)]
     (into {}
       (for [[index group] grouped-cells
             :let [min-axis-size (min-size axis group)]
             :when (not= -1 min-axis-size)]
         [index min-axis-size]))))
 
-(defn spreadsheet-context [cells]
+;; Writing to Excel
+(defn build-context! [workbook cells]
   {:min-row-sizes (grouped-min-size :row cells)
-   :min-col-sizes (grouped-min-size :col cells)})
+   :min-col-sizes (grouped-min-size :col cells)
+   :cell-styles   (reduce #(accumulate-style-cache! workbook %1 %2) {} cells)})
 
-;; TODO: Cache cell style and font whilst looping
+(defn- set-cell-value-and-style! [context workbook cell]
+  (let [sheet     (get-or-create-sheet! cell workbook)
+        row       (get-or-create-row! cell sheet)
+        poi-cell  (get-or-create-cell! cell row)
+        style     ((:cell-styles context) (:style cell))]
+    (.setCellValue poi-cell (ensure-settable (:value cell)))
+    (.setCellStyle poi-cell style)))
+
+(defn- set-row-height! [workbook coord row-size]
+  (let [row-index (:row coord)
+        sheet     (.getSheet workbook (:sheet coord))
+        row       (.getRow sheet row-index)]
+    (.setHeightInPoints row (float row-size))))
+
+(defn- set-col-width! [workbook coord col-size]
+  (let [col-index (:col coord)
+        sheet     (.getSheet workbook (:sheet coord))]
+    (if (= col-size :auto)
+      (.autoSizeColumn sheet col-index)
+      (.setColumnWidth sheet col-index (* col-size 256)))))
+
 (defn- throwable-write-xlsx! [cells path]
   (let [workbook      (XSSFWorkbook.)
         output-stream (FileOutputStream. path)
-        context       (spreadsheet-context cells)]
-    (doall
-      (for [cell cells]
-        (let [row-index (-> cell :coord :row)
-              col-index (-> cell :coord :col)
-              sheet     (get-or-create-sheet! cell workbook)
-              row       (get-or-create-row! cell sheet)
-              poi-cell  (get-or-create-cell! cell row)
-              style     (create-cell-style! workbook cell)
-              font      (create-cell-font! workbook cell)]
-         (.setCellValue poi-cell (ensure-settable (:value cell)))
-         (.setFont style font)
-         (.setCellStyle poi-cell style)
-         (when-let [row-size ((:min-row-sizes context) row-index)]
-           (.setHeightInPoints row (float row-size)))
-         (when-let [col-size ((:min-col-sizes context) col-index)]
-           (if (= col-size :auto)
-             (.autoSizeColumn sheet col-index)
-             (.setColumnWidth sheet col-index (* col-size 256)))))))
+        context       (build-context! workbook cells)]
+    (doall (for [cell cells]
+             (set-cell-value-and-style! context workbook cell)))
+    (doall (for [[coord row-size] (:min-row-sizes context)]
+             (set-row-height! workbook coord row-size)))
+    (doall (for [[coord col-size] (:min-col-sizes context)]
+            (set-col-width! workbook coord col-size)))
     (.write workbook output-stream)
     (.close workbook)
     {:workbook workbook :output-stream output-stream}))

@@ -21,10 +21,14 @@ continuous-integration: build
 		 && echo 'Running Kibit...' && lein kibit src test \
 		 && echo 'Running Cloverage...' && lein cloverage --fail-threshold 90 --ns-exclude-regex zero-one.fxl.specs"
 
-lint:
-	clj-kondo --lint src test
-	lein kibit src test
+all-tests: unit-tests coverage
 
 unit-tests:
 	lein midje
+
+coverage:
 	lein cloverage --fail-threshold 90 --ns-exclude-regex zero-one.fxl.specs
+
+lint:
+	clj-kondo --lint src test
+	lein kibit src test

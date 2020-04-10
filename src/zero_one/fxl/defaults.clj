@@ -1,5 +1,7 @@
 (ns zero-one.fxl.defaults)
 
+(def sheet "Sheet1")
+
 (def value nil)
 
 (def coord {:row 0 :col 0})
