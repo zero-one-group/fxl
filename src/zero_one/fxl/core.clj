@@ -11,12 +11,12 @@
 (defn ->cell [maybe-cell]
   (merge defaults/cell maybe-cell))
 
-(defn ->max-col [cells]
+(defn max-col [cells]
   (->> cells
        (map (comp :col :coord))
        (apply max -1)))
 
-(defn ->max-row [cells]
+(defn max-row [cells]
   (->> cells
        (map (comp :row :coord))
        (apply max -1)))
@@ -72,7 +72,7 @@
   ([] nil)
   ([cells] cells)
   ([l-cells r-cells]
-   (let [shift   (inc (->max-col l-cells))
+   (let [shift   (inc (max-col l-cells))
          shifted (map #(shift-right shift %) r-cells)]
      (concat l-cells shifted)))
   ([l-cells r-cells & tail]
@@ -89,7 +89,7 @@
   ([] nil)
   ([cells] cells)
   ([l-cells r-cells]
-   (let [shift   (inc (->max-row l-cells))
+   (let [shift   (inc (max-row l-cells))
          shifted (map #(shift-down shift %) r-cells)]
      (concat l-cells shifted)))
   ([l-cells r-cells & tail]

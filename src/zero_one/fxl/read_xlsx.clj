@@ -6,6 +6,7 @@
     [zero-one.fxl.colours :as colours]
     [zero-one.fxl.defaults :as defaults])
   (:import
+    [java.io FileInputStream]
     [org.apache.poi.xssf.usermodel XSSFWorkbook]
     [org.apache.poi.ss.usermodel Font]))
 
@@ -63,7 +64,8 @@
       cell-style)))
 
 (defn- extract-cell-style [workbook cell]
-  (let [cell-style (merge
+  (let [col-index  (.getColumnIndex cell)
+        cell-style (merge
                       (extract-cell-border-style cell)
                       (extract-cell-alignment-style cell)
                       (extract-cell-font-style workbook cell)
@@ -73,7 +75,16 @@
                                               colours/colours-lookup)
                        :data-format       (-> cell
                                               .getCellStyle
-                                              .getDataFormatString)})]
+                                              .getDataFormatString)
+                       :col-size          (-> cell
+                                              .getSheet
+                                              (.getColumnWidth col-index)
+                                              (/ 256.0)
+                                              int)
+                       :row-size          (-> cell
+                                              .getRow
+                                              .getHeightInPoints
+                                              int)})]
     (prune-cell-style cell-style)))
 
 (defn- extract-poi-cells [workbook]
@@ -92,9 +103,10 @@
       :style (extract-cell-style workbook poi-cell)}))
 
 (defn- throwable-read-xlsx! [path]
-  (let [workbook  (XSSFWorkbook. path)
-        poi-cells (extract-poi-cells workbook)
-        cells     (map #(poi-cell->fxl-cell workbook %) poi-cells)]
+  (let [input-stream (FileInputStream. path)
+        workbook     (XSSFWorkbook. input-stream)
+        poi-cells    (extract-poi-cells workbook)
+        cells        (map #(poi-cell->fxl-cell workbook %) poi-cells)]
     (.close workbook)
     cells))
 

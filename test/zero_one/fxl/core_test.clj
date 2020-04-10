@@ -18,11 +18,13 @@
     (fact "There should be 23 cells"
       (count cells) => 23)
     (fact "Font style should be extracted"
-      (contains? styles {:font-size 14}) => true)
+      (contains? (->> styles (map :font-size) set) 14) => true)
     (fact "Border style should be extracted"
-      (contains?  styles {:bottom-border {:style :thin :colour :black1}}) => true)
+      (contains?
+        (->> styles (map :bottom-border) set)
+        {:style :thin :colour :black1}) => true)
     (fact "Alignment style should be extracted"
-      (contains? styles {:vertical :center}) => true)
+      (contains? (->> styles (map :vertical) set) :center) => true)
     (fact "Data formats should be extracted"
       (->> styles (map :data-format) count) => #(< 1 %))
     ;; TODO: background-colour seems to be undetected!
@@ -64,11 +66,18 @@
                       :style {:data-format "@"}}
                      {:coord {:row 2 :col 1 :sheet "S2"} :value 2.71
                       :style {:data-format "non-builtin"}}
-                     {:coord {:row 3 :col 0 :sheet "S2"} :value true  :style {}}
-                     {:coord {:row 3 :col 1 :sheet "S2"} :value false :style {}}]
+                     {:coord {:row 3 :col 0 :sheet "S2"} :value true
+                      :style {:row-size 10}}
+                     {:coord {:row 3 :col 1 :sheet "S2"} :value false
+                      :style {:col-size 15}}]
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Write and read cells should have the same count"
       (count read-cells) => (count write-cells))
+    (fact "Row and col sizes should be preserved"
+      (let [row-sizes (->> read-cells (map (comp :row-size :style)) set)]
+        (contains? row-sizes 10) => true)
+      (let [col-sizes (->> read-cells (map (comp :col-size :style)) set)]
+        (contains? col-sizes 15) => true))
     (fact "Horizontal alignment style should be preserved"
       (let [horizontals (->> read-cells (map (comp :horizontal :style)) set)]
         (contains? horizontals :fill) => true))
@@ -94,7 +103,8 @@
                        :underline   true
                        :strikeout   true
                        :font-colour :red
-                       :font-name   "Arial"}))
+                       :font-name   "Arial"
+                       :col-size    15}))
     (fact "Data formats should be preserved"
       (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
         (contains? data-formats "@") => true))
@@ -106,4 +116,9 @@
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Overwrite cells should work correctly"
       (count read-cells) => 1
-      (-> read-cells first :value) => "abc")))
+      (-> read-cells first :value) => "abc"))
+  (let [write-cells [{:value "abcdefghijklmnopqrstuvwxyz"
+                      :coord {:row 1 :col 2}
+                      :style {:col-size :auto}}]
+        read-cells (write-then-read-xlsx! write-cells)]
+    (-> read-cells first :style :col-size) => #(< 8 %)))

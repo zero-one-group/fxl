@@ -23,7 +23,9 @@
   :top-border        {:style :none, :colour :black},
   ; Others
   :background-colour :automatic
-  :data-format       "General"})
+  :data-format       "General"
+  :row-size          15
+  :col-size          8})
 
 
 (def cell
