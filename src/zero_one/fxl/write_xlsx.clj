@@ -75,20 +75,50 @@
       (.setFontName font font-name))
     font))
 
+(defn- min-size [axis cells]
+  (let [coord-key ({:row :row-size :col :col-size} axis)
+        sizes     (->> cells
+                        (map (comp coord-key :style))
+                        (filter some?))]
+    (if (some #(= % :auto) sizes)
+      :auto
+      (apply max -1 sizes))))
+
+(defn- grouped-min-size [axis cells]
+  (let [grouped-cells (group-by (comp axis :coord) cells)]
+    (into {}
+      (for [[index group] grouped-cells
+            :let [min-axis-size (min-size axis group)]
+            :when (not= -1 min-axis-size)]
+        [index min-axis-size]))))
+
+(defn spreadsheet-context [cells]
+  {:min-row-sizes (grouped-min-size :row cells)
+   :min-col-sizes (grouped-min-size :col cells)})
+
 ;; TODO: Cache cell style and font whilst looping
 (defn- throwable-write-xlsx! [cells path]
   (let [workbook      (XSSFWorkbook.)
-        output-stream (FileOutputStream. path)]
+        output-stream (FileOutputStream. path)
+        context       (spreadsheet-context cells)]
     (doall
       (for [cell cells]
-        (let [sheet     (get-or-create-sheet! cell workbook)
+        (let [row-index (-> cell :coord :row)
+              col-index (-> cell :coord :col)
+              sheet     (get-or-create-sheet! cell workbook)
               row       (get-or-create-row! cell sheet)
               poi-cell  (get-or-create-cell! cell row)
               style     (create-cell-style! workbook cell)
               font      (create-cell-font! workbook cell)]
          (.setCellValue poi-cell (ensure-settable (:value cell)))
          (.setFont style font)
-         (.setCellStyle poi-cell style))))
+         (.setCellStyle poi-cell style)
+         (when-let [row-size ((:min-row-sizes context) row-index)]
+           (.setHeightInPoints row (float row-size)))
+         (when-let [col-size ((:min-col-sizes context) col-index)]
+           (if (= col-size :auto)
+             (.autoSizeColumn sheet col-index)
+             (.setColumnWidth sheet col-index (* col-size 256)))))))
     (.write workbook output-stream)
     (.close workbook)
     {:workbook workbook :output-stream output-stream}))

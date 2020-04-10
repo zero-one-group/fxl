@@ -2,7 +2,6 @@
   (:import
     [org.apache.poi.ss.usermodel BorderStyle]))
 
-
 (def border-styles
   {:dash_dot            BorderStyle/DASH_DOT
    :dash_dot_dot        BorderStyle/DASH_DOT_DOT

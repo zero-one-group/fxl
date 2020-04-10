@@ -26,7 +26,21 @@
 
 (facts "On fxl data formats"
   (fact "Should allow example format"
-    (fs/valid? ::fs/data-format "[h]:mm:ss") => true))
+    (fs/valid? ::fs/data-format "[h]:mm:ss") => true)
+  (fact "Should not allow random data format"
+    nil => (fs/invalid? ::fs/data-format)))
+
+(facts "On fxl min-row-size and max-col-size"
+  (fact "Should not allow invalid min and max row sizes"
+    {:value nil
+     :coord {:row 0 :col 0}
+     :style {:row-size nil}} => (fs/invalid? ::fs/cell)
+    {:value nil
+     :coord {:row 0 :col 0}
+     :style {:col-size "abc"}} => (fs/invalid? ::fs/cell)
+    {:value nil
+     :coord {:row 0 :col 0}
+     :style {:col-size :auto}} => (fs/valid? ::fs/cell)))
 
 (facts "On fxl font styles"
   (fact "Should allow example font style"

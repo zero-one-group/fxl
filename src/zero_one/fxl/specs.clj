@@ -56,11 +56,17 @@
 ;;;; Aggregated Style
 (s/def ::data-format string?)
 (s/def ::background-colour (-> colours keys set))
+(s/def ::row-size ::row)
+(s/def ::col-size (s/or :number ::col
+                        :auto   #(= % :auto)))
 (s/def ::style
   (s/merge ::font-style
            ::alignment-style
            ::border-style
-           (s/keys :opt-un [::background-colour])))
+           (s/keys :opt-un [::data-format
+                            ::background-colour
+                            ::row-size
+                            ::col-size])))
 
 ;; Cell Value
 (s/def ::value (s/nilable (s/or :string  string?
@@ -72,12 +78,18 @@
   (s/keys :req-un [::value ::coord ::style]))
 
 ;; Handy Functions
-(defn valid? [spec value]
-  (if (s/valid? spec value)
-    true
-    (do
-      (expound/expound spec value)
-      false)))
+(defn valid?
+  ([spec]
+   (fn [value] (valid? spec value)))
+  ([spec value]
+   (if (s/valid? spec value)
+     true
+     (do
+       (expound/expound spec value)
+       false))))
 
-(defn invalid? [spec value]
-  (not (s/valid? spec value)))
+(defn invalid?
+  ([spec]
+   (fn [value] (invalid? spec value)))
+  ([spec value]
+   (not (s/valid? spec value))))
