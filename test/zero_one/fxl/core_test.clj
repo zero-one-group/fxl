@@ -103,8 +103,7 @@
                        :underline   true
                        :strikeout   true
                        :font-colour :red
-                       :font-name   "Arial"
-                       :col-size    15}))
+                       :font-name   "Arial"}))
     (fact "Data formats should be preserved"
       (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
         (contains? data-formats "@") => true))

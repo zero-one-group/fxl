@@ -54,8 +54,8 @@
         (fxl/max-col concatted) => 4))))
 
 (facts "On pad functions"
-  (let [cells (map fxl/->cell [{:value 123 :coord {:row 5 :col 5}}
-                               {:value 456 :coord {:row 2 :col 2}}])]
+  (let [cells (map fxl/->cell [{:value 123 :coord {:row 5 :col 2}}
+                               {:value 456 :coord {:row 2 :col 5}}])]
     (fact "Pad functions should handle degenerate case"
       (-> (fxl/pad-right nil) first :coord) => {:row 0 :col 0}
       (-> (fxl/pad-below nil) first :coord) => {:row 0 :col 0})
@@ -68,7 +68,12 @@
       (fxl/max-row (fxl/pad-below cells)) => 6
       (fxl/max-col (fxl/pad-below cells)) => 5
       (fxl/max-row (fxl/pad-below 13 cells)) => 18
-      (fxl/max-col (fxl/pad-below 13 cells)) => 5)))
+      (fxl/max-col (fxl/pad-below 13 cells)) => 5)
+    (fact "Correct fxl/pad-table"
+      (let [padded-cells (fxl/pad-table cells)]
+        (->> padded-cells (map (comp :row :coord)) set) => (set (range 6))
+        (->> padded-cells (map (comp :col :coord)) set) => (set (range 6))
+        (count padded-cells) => (* 6 6)))))
 
 (facts "On fxl/row->cells"
   (let [row   (range 10)
@@ -130,3 +135,10 @@
                  ["Gym"  50   nil   "xyz"]]
       (fxl/max-row cells) => 3
       (fxl/max-col cells) => 3)))
+
+(fact "On fxl/restyle-borders"
+  (let [border-style {:colour :black :style :hair}]
+    (fxl/restyle-borders {} border-style) => {:style {:bottom-border border-style
+                                                      :left-border   border-style
+                                                      :right-border  border-style
+                                                      :top-border    border-style}}))
