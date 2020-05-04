@@ -1,9 +1,10 @@
-(defproject zero.one/fxl "0.0.1-SNAPSHOT"
+(defproject zero.one/fxl "0.0.1"
   :description "fxl is a Clojure spreadsheet library."
   :url "https://gitlab.com/zero-one-open-source/fxl"
   :license {:name "Apache License"
             :url  "https://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[org.clojure/clojure "1.10.1"]
+                 [org.clojure/math.combinatorics "0.1.6"]
                  [org.apache.poi/poi-ooxml "4.1.2"]
                  [failjure "2.0.0"]]
   :profiles {:dev {:dependencies [[midje "1.9.9"]
