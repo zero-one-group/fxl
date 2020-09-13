@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+lein cloverage \
+    --fail-threshold 99 \
+    --codecov \
+    --html \
+    --runner :midje

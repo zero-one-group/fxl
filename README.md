@@ -24,13 +24,17 @@ The library is written with simplicity in mind - particularly as discussed in Ri
 
 What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) is to represent spreadsheets as an unordered collection of maps, instead of relying on tabular formats. This allows us not to worry about the overall shape of the table when manipulating the cell values. As a result, it is easier to deal with independent, smaller components of the spreadsheet and simply apply `concat` to put them together.
 
+[![cljdoc](https://cljdoc.org/badge/zero.one/fxl)](https://cljdoc.org/d/zero.one/fxl/CURRENT)
+[![slack](https://badgen.net/badge/-/clojurians%2Ffxl?icon=slack&label)](https://clojurians.slack.com/messages/fxl/)
+[![zulip](https://img.shields.io/badge/zulip-clojurians%2Ffxl-brightgreen.svg)](https://clojurians.zulipchat.com/#narrow/stream/257213-fxl)
+
 # Examples
 
 ## Cell as Map
 
 A `fxl` cell is represented by a map that tells us its value, location and style. For instance:
 
-```
+```clojure
 {:value -2.2
  :coord {:row 4 :col 3 :sheet "Growth"}
  :style {:data-format "0.00%" :background-colour :yellow}}
