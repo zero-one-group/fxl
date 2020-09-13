@@ -106,7 +106,14 @@
     (fact "There should be two rows"
       (->> cells (map (comp :row :coord)) set) => #{0 1})
     (fact "There should be two cols"
-      (->> cells (map (comp :col :coord)) set) => #{0 1})))
+      (->> cells (map (comp :col :coord)) set) => #{0 1})
+    (fact "Inverse works"
+      (fxl/cells->table cells) => #(and (= % table)
+                                        (vector? %)
+                                        (every? vector? %))
+      (fxl/cells->table cells "Sheet1") => table
+      (fxl/cells->table cells "Sheet2") => empty?)))
+
 
 (facts "On fxl/records->table and fxl/records->cells"
   (let [records [{:item "Rent" :cost 1000}
@@ -134,7 +141,18 @@
                  ["Food" 300  nil   nil]
                  ["Gym"  50   nil   "xyz"]]
       (fxl/max-row cells) => 3
-      (fxl/max-col cells) => 3)))
+      (fxl/max-col cells) => 3)
+    (fact "Inverse works"
+      (fxl/cells->records cells [:item :cost :description :comment])
+      => #(and (= % records)
+               (vector? %)
+               (every? map? %))
+      (fxl/cells->records cells [:item :cost])
+      => (map #(dissoc % :description :comment) records)
+      (fxl/cells->records cells [:item :cost :description :comment] "Sheet1")
+      => records
+      (fxl/cells->records cells [:item :cost :description :comment] "Sheet2")
+      => empty?)))
 
 (fact "On fxl/restyle-borders"
   (let [border-style {:colour :black :style :hair}]
