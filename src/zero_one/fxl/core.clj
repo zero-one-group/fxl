@@ -58,7 +58,9 @@
   ([cells] (cells->table cells (first (map :sheet cells))))
   ([cells sheet]
    (let [sheet   (or sheet "Sheet1")
-         cells   (filter #(= (:sheet % "Sheet1") sheet) cells)
+         cells   (->> cells
+                      (filter #(= (-> % :coord (:sheet "Sheet1")) sheet))
+                      (map #(update % :coord dissoc :sheet)))
          indexed (group-by :coord cells)]
      (forv [i (range (inc (max-row cells)))]
        (forv [j (range (inc (max-col cells)))]
