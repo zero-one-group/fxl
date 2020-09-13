@@ -14,6 +14,10 @@ docker-push: build
 	docker push $(DOCKERNAME):latest
 
 docker-release: build
+	cp project.clj docker/project.clj
+	docker build -f docker/Dockerfile \
+		-t $(DOCKERNAME):$(VERSION) \
+		docker
 	docker push $(DOCKERNAME):$(VERSION)
 
 dock: build
