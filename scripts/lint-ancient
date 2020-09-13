@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+clj-kondo  --lint src test --cache false
+
+mkdir -p target
+lein ancient
+
+mkdir -p target
+lein ancient :plugins

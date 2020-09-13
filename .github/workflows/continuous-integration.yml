@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - develop
+  schedule:
+    - cron: '0 0 * * *'
 
 jobs:
   unit-tests:
@@ -16,27 +18,16 @@ jobs:
       - name: unit-tests
         uses: docker://zeroonetechnology/fxl:latest
         with:
-          entrypoint: lein
-          args: midje
-  coverage:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: coverage
-        uses: docker://zeroonetechnology/fxl:latest
-        with:
-          entrypoint: sh
-          args: -c "lein cloverage --fail-threshold 90 --codecov"
+          entrypoint: scripts/coverage
       - uses: codecov/codecov-action@v1
         with:
          file: target/coverage/codecov.json
          fail_ci_if_error: true
-  lint:
+  lint-ancient:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: lint
+      - name: lint-ancient
         uses: docker://zeroonetechnology/fxl:latest
         with:
-          entrypoint: clj-kondo
-          args: --lint src test
+          entrypoint: scripts/lint-ancient
