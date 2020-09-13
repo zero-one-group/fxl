@@ -1,4 +1,8 @@
-<img src="logo/fxl.png" width="250px">
+<p align="center">
+    <img src="logo/fxl.png" width="375px">
+</p>
+
+`fxl` (*/ˈfɪk.səl/* or "pixel" with an f) is a Clojure library for manipulating spreadsheets.
 
 [![Continuous Integration](https://github.com/zero-one-group/fxl/workflows/Continuous%20Integration/badge.svg?branch=develop)](https://github.com/zero-one-group/fxl/commits/develop)
 [![Code Coverage](https://codecov.io/gh/zero-one-group/fxl/branch/develop/graph/badge.svg)](https://codecov.io/gh/zero-one-group/fxl)
@@ -10,19 +14,19 @@ See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.co
 
 # Introduction
 
-`fxl` (*/ˈfɪk.səl/* or "pixel" with an f) is a Clojure library for manipulating spreadsheets.
+The goal of the project is to provide a composable data-oriented spreadsheet interface for Clojure. The library is written with simplicity in mind - particularly as discussed in Rich Hickey's talk [Simplicity Matters](https://www.youtube.com/watch?v=rI8tNMsozo0) on the [list-and-order problem](https://youtu.be/rI8tNMsozo0?t=1448).
 
-The goal is to represent spreadsheets as a collection of maps.
+<blockquote>
+    <p> 
+        If order matters, complexity has been introduced to the system
+    </p>
+    &mdash;
+    <a href="https://youtu.be/rI8tNMsozo0">
+        Rich Hickey, Simplicity Matters
+    </a>
+</blockquote>
 
-The library is written with simplicity in mind - particularly as discussed in Rich Hickey's talk [Simplicity Matters](https://www.youtube.com/watch?v=rI8tNMsozo0).
-
->>>
-"If order matters, complexity has been introduced to the system”
-
-&mdash; Rich Hickey on the [list-and-order problem](https://youtu.be/rI8tNMsozo0?t=1448).
->>>
-
-What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) is to represent spreadsheets as an unordered collection of maps, instead of relying on tabular formats. This allows us not to worry about the overall shape of the table when manipulating the cell values. As a result, it is easier to deal with independent, smaller components of the spreadsheet and simply apply `concat` to put them together.
+What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) is to represent spreadsheets as an unordered collection of maps, instead of relying on tabular formats. This makes it easier to deal with independent, smaller components of the spreadsheet and simply apply `concat` to put together different components of a spreadsheet.
 
 [![cljdoc](https://cljdoc.org/badge/zero.one/fxl)](https://cljdoc.org/d/zero.one/fxl/CURRENT)
 [![slack](https://badgen.net/badge/-/clojurians%2Ffxl?icon=slack&label)](https://clojurians.slack.com/messages/fxl/)
@@ -30,7 +34,7 @@ What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docju
 
 # Examples
 
-## Cell as Map
+## Map Representation of Cells
 
 A `fxl` cell is represented by a map that tells us its value, location and style. For instance:
 
