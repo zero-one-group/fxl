@@ -8,9 +8,9 @@ RUN cd /root && lein with-profile +dev deps
 
 RUN bash -c "bash <(curl -s https://raw.githubusercontent.com/borkdude/clj-kondo/master/script/install-clj-kondo)"
 
-RUN cd /root/ \
+RUN cd /root \
+    && lein with-profile +dev deps
     && lein midje || true \
-    && lein kibit || true \
     && lein cloverage || true
 
 ENTRYPOINT []
