@@ -50,6 +50,35 @@
   ([records] (table->cells (records->table records)))
   ([ks records] (table->cells (records->table ks records))))
 
+;; Inverse Helper Functions: Unordered -> Ordered
+(defmacro forv [& body]
+  `(vec (for ~@body)))
+
+(defn cells->table
+  ([cells] (cells->table cells (first (map :sheet cells))))
+  ([cells sheet]
+   (let [sheet   (or sheet "Sheet1")
+         cells   (filter #(= (:sheet % "Sheet1") sheet) cells)
+         indexed (group-by :coord cells)]
+     (forv [i (range (inc (max-row cells)))]
+       (forv [j (range (inc (max-col cells)))]
+         (-> (indexed {:row i :col j}) first :value))))))
+
+(defn cells->records
+  ([cells ks] (cells->records cells ks (first (map :sheet cells))))
+  ([cells ks sheet]
+   (let [sheet   (or sheet "Sheet1")
+         cells   (filter #(= (:sheet % "Sheet1") sheet) cells)
+         ks      (into [] ks)
+         indexed (group-by :coord cells)]
+     (forv [i (range (inc (max-row cells)))]
+       (into {}
+         (forv [j (range (inc (max-col cells)))
+                :let  [k (nth ks j nil)
+                       v (-> (indexed {:row i :col j}) first :value)]
+                :when (and k v)]
+           (vector k v)))))))
+
 ;; Helper Functions: Relative Coords
 (defn- shift-cell [dir shift cell]
   (let [old-index (get-in cell [:coord dir])
