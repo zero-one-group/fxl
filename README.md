@@ -14,9 +14,7 @@ See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.co
 
 # Introduction
 
-The goal of the project is to provide a composable data-oriented spreadsheet interface for Clojure.
-
-The library is written with simplicity in mind - particularly as discussed in Rich Hickey's talk [Simplicity Matters](https://www.youtube.com/watch?v=rI8tNMsozo0) on the [list-and-order problem](https://youtu.be/rI8tNMsozo0?t=1448).
+The goal of the project is to provide a composable data-oriented spreadsheet interface for Clojure. The library is written with simplicity in mind - particularly as discussed in Rich Hickey's talk [Simplicity Matters](https://www.youtube.com/watch?v=rI8tNMsozo0) on the [list-and-order problem](https://youtu.be/rI8tNMsozo0?t=1448).
 
 <blockquote>
     <p> 
