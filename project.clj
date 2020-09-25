@@ -10,5 +10,5 @@
                                   [expound "0.8.5"]]
                    :plugins [[lein-ancient "0.6.15"]
                              [lein-midje "3.2.2"]
-                             [lein-cloverage "1.2.0"]]}
+                             [lein-cloverage "1.2.1"]]}
              :provided {:dependencies [[org.clojure/clojure "1.10.1"]]}})
