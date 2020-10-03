@@ -7,7 +7,7 @@
                  [org.apache.poi/poi-ooxml "4.1.2"]
                  [failjure "2.0.0"]]
   :profiles {:dev {:dependencies [[midje "1.9.9"]
-                                  [expound "0.8.5"]]
+                                  [expound "0.8.6"]]
                    :plugins [[lein-ancient "0.6.15"]
                              [lein-midje "3.2.2"]
                              [lein-cloverage "1.2.1"]]}
