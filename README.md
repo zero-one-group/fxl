@@ -72,7 +72,7 @@ Assume that we have the cost data in the following form:
   [{:item "Rent" :cost 1000}
    {:item "Gas"  :cost 100}
    {:item "Food" :cost 300}
-   {:item "Gym"  :cost 50}]
+   {:item "Gym"  :cost 50}])
 ```
 
 We would break the spreadsheet down into three components, namely the header, the body and the total:
