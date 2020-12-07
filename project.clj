@@ -3,7 +3,7 @@
   :url "https://gitlab.com/zero-one-open-source/fxl"
   :license {:name "Apache License"
             :url  "https://www.apache.org/licenses/LICENSE-2.0"}
-  :dependencies [[expound "0.8.6"]
+  :dependencies [[expound "0.8.7"]
                  [failjure "2.0.0"]
                  [org.apache.poi/poi-ooxml "4.1.2"]
                  [org.clojure/math.combinatorics "0.1.6"]]
