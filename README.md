@@ -10,7 +10,7 @@
 
 WARNING! This library is still unstable. Some information here may be outdated. Do not use it in production just yet!
 
-See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) for more mature alternatives.
+See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj) for more mature alternatives.
 
 # Introduction
 
