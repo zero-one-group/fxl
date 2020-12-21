@@ -10,7 +10,7 @@
 
 WARNING! This library is still unstable. Some information here may be outdated. Do not use it in production just yet!
 
-See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj/tree/master/src/excel_clj) for more mature alternatives.
+See [docjure](https://github.com/mjul/docjure) and [excel-clj](https://github.com/matthewdowney/excel-clj) for more mature alternatives.
 
 # Introduction
 
@@ -125,7 +125,7 @@ Here we use `row->cells`, `table->cells`, `pad-below` and `concat-below` to help
   "examples/spreadsheets/write_to_plain_excel_with_helpers.xlsx")
 ```
 
-More helper functions are available - see [here](https://gitlab.com/zero-one-open-source/fxl/-/blob/develop/src/zero_one/fxl/core.clj).
+More helper functions are available - see [here](https://github.com/zero-one-group/fxl/blob/develop/src/zero_one/fxl/core.clj).
 
 ## Modular Styling
 
