@@ -2,6 +2,7 @@
   (:require   [midje.sweet :refer [facts fact => throws]]
               [zero-one.fxl.specs :as fs]
               [clojure.spec.alpha :as s]
+              [clojure.java.io]
               [zero-one.fxl.google-sheets :as gs]))
 
 (def google-props
@@ -34,7 +35,7 @@
                                 :action!     (action-fn 3)}) => (throws Exception))
 
 ;; HACK: To remove check after secret is added
-(when-not (empty? (slurp "resources/credentials.json"))
+(when (.exists (clojure.java.io/file "resources/credentials.json"))
   (defonce service (gs/sheets-service google-props))
 
   (facts "On gs/read-google-sheets!"
