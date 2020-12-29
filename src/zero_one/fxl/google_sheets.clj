@@ -1,5 +1,6 @@
 (ns zero-one.fxl.google-sheets
-  (:require [zero-one.fxl.core :as fxl])
+  (:require [zero-one.fxl.core :as fxl]
+            [clojure.java.io])
   (:import
    (com.google.api.client.googleapis.auth.oauth2 GoogleCredential)
    (com.google.api.client.googleapis.javanet GoogleNetHttpTransport)
@@ -7,8 +8,7 @@
    (com.google.api.services.sheets.v4 SheetsScopes
                                       Sheets$Builder)
    (com.google.api.services.drive DriveScopes
-                                  Drive$Builder)
-   ))
+                                  Drive$Builder)))
 
 (def json-factory (JacksonFactory/getDefaultInstance))
 
