@@ -7,8 +7,6 @@
 (def google-props
   {:credentials "resources/credentials.json"})
 
-(defonce service (gs/sheets-service google-props))
-
 (defn action-fn [retries-to-success]
   (let [n-tries (atom 0)]
     (fn []
@@ -35,14 +33,18 @@
                                 :max-ms      399
                                 :action!     (action-fn 3)}) => (throws Exception))
 
-(facts "On gs/read-google-sheets!"
-       (let [spreadsheet-id "1_8g_ItFMIgpCMFIQ1L1CTRhF4oKsjTs4zYe0UMRSd-w"
-             sheet-names    (gs/sheet-names! service spreadsheet-id)
-             cells          (gs/read-google-sheets! service spreadsheet-id (first sheet-names))
-             values         (->> cells (map :value) set)]
-         (fact "Read cells should all be valid"
-               (filter #(not (s/valid? ::fs/cell %)) cells) => ())
-         (fact "There should be 15 cells"
-               (count cells) => 15)
-         (fact "Values should be extracted"
-               (contains? values "1.4142") => true)))
+;; HACK: To remove check after secret is added
+(when-not (empty? (slurp "resources/credentials.json"))
+  (defonce service (gs/sheets-service google-props))
+
+  (facts "On gs/read-google-sheets!"
+         (let [spreadsheet-id "1_8g_ItFMIgpCMFIQ1L1CTRhF4oKsjTs4zYe0UMRSd-w"
+               sheet-names    (gs/sheet-names! service spreadsheet-id)
+               cells          (gs/read-google-sheets! service spreadsheet-id (first sheet-names))
+               values         (->> cells (map :value) set)]
+           (fact "Read cells should all be valid"
+                 (filter #(not (s/valid? ::fs/cell %)) cells) => ())
+           (fact "There should be 15 cells"
+                 (count cells) => 15)
+           (fact "Values should be extracted"
+                 (contains? values "1.4142") => true))))
