@@ -1,9 +1,10 @@
 (ns zero-one.fxl.google-sheets-test
-  (:require   [midje.sweet :refer [facts fact => throws]]
-              [zero-one.fxl.specs :as fs]
-              [clojure.spec.alpha :as s]
-              [clojure.java.io]
-              [zero-one.fxl.google-sheets :as gs]))
+  (:require [clojure.java.io]
+            [clojure.spec.alpha :as s]
+            [clojure.string]
+            [midje.sweet :refer [facts fact => throws]]
+            [zero-one.fxl.google-sheets :as gs]
+            [zero-one.fxl.specs :as fs]))
 
 (def google-props
   {:credentials "resources/credentials.json"})
@@ -34,8 +35,12 @@
                                 :max-ms      399
                                 :action!     (action-fn 3)}) => (throws Exception))
 
-;; HACK: To remove check after secret is added
-(when (.exists (clojure.java.io/file "resources/credentials.json"))
+(defn valid-credentials? []
+  (let [credentials-path "resources/credentials.json"]
+    (and (.exists (clojure.java.io/file credentials-path))
+         (seq (clojure.string/trim (slurp credentials-path))))))
+
+(when valid-credentials?
   (defonce service (gs/sheets-service google-props))
 
   (facts "On gs/read-google-sheets!"

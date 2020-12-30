@@ -1,36 +1,25 @@
 (ns zero-one.fxl.google-sheets
-  (:require [zero-one.fxl.core :as fxl]
-            [clojure.java.io])
+  (:require [clojure.java.io]
+            [zero-one.fxl.core :as fxl])
   (:import
    (com.google.api.client.googleapis.auth.oauth2 GoogleCredential)
    (com.google.api.client.googleapis.javanet GoogleNetHttpTransport)
    (com.google.api.client.json.jackson2 JacksonFactory)
    (com.google.api.services.sheets.v4 SheetsScopes
-                                      Sheets$Builder)
-   (com.google.api.services.drive DriveScopes
-                                  Drive$Builder)))
+                                      Sheets$Builder)))
 
 (def json-factory (JacksonFactory/getDefaultInstance))
 
 (def http-transport (GoogleNetHttpTransport/newTrustedTransport))
 
-;; NOTE: DriveScopes/DRIVE and drive-service
-;; will be needed for delete-sheets!
 (defn- google-credentials [creds-path]
   (-> (GoogleCredential/fromStream (clojure.java.io/input-stream creds-path))
-      (.createScoped [SheetsScopes/SPREADSHEETS DriveScopes/DRIVE])))
+      (.createScoped [SheetsScopes/SPREADSHEETS])))
 
 (defn sheets-service [google-props]
   (let [app-name    (:app-name google-props "fxl")
         credentials (google-credentials (:credentials google-props))]
     (-> (Sheets$Builder. http-transport json-factory credentials)
-        (.setApplicationName app-name)
-        .build)))
-
-(defn drive-service [google-props]
-  (let [app-name    (:app-name google-props "fxl")
-        credentials (google-credentials (:credentials google-props))]
-    (-> (Drive$Builder. http-transport json-factory credentials)
         (.setApplicationName app-name)
         .build)))
 
@@ -65,16 +54,13 @@
                        .spreadsheets
                        .values
                        (.get spreadsheet-id sheet-name)
-                       ;; (.setValueRenderOption "UNFORMATTED_VALUE")
                        safely-execute!
                        .getValues)]
     value-objs))
 
-;; TODO: Read Unformatted value and convert BigDecimal to int/float
 (defn read-google-sheets! [service spreadsheet-id sheet-name]
   (-> (sheet-values! service spreadsheet-id sheet-name) 
       fxl/table->cells))
-
 
 (comment
   (let [google-props   {:credentials "resources/credentials.json"}
