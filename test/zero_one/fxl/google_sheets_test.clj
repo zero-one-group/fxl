@@ -55,4 +55,4 @@
             (fact "There should be 15 cells"
                   (count cells) => 15)
             (fact "Values should be extracted"
-                  (contains? values "1.4142") => true))))
+                  (contains? values 1.4142M) => true))))
