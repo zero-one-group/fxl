@@ -102,6 +102,7 @@
                        :italic      true
                        :underline   true
                        :strikeout   true
+                       :font-size   12
                        :font-colour :red
                        :font-name   "Arial"}))
     (fact "Data formats should be preserved"
