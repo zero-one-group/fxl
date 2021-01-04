@@ -10,9 +10,10 @@
     [org.apache.poi.xssf.usermodel XSSFWorkbook]))
 
 (facts "On fxl/read-xlsx"
-  (let [cells  (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
-        values (->> cells (map :value) set)
-        styles (->> cells (map :style) set)]
+  (let [cells   (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
+        formula (->> cells (map :formula) set)
+        values  (->> cells (map :value) set)
+        styles  (->> cells (map :style) set)]
     (fact "Read cells should all be valid"
       (filter #(not (s/valid? ::fs/cell %)) cells) => ())
     (fact "There should be 23 cells"
@@ -30,7 +31,9 @@
     (fact "Background colour should be extracted"
       (contains? (->> styles (map :background-colour) set) :yellow) => true)
     (fact "Values should be extracted"
-      (contains? values 1.4142) => true)))
+      (contains? values 1.4142) => true)
+    (fact "Formulas should be extracted"
+      (contains? formula "PRODUCT(B2:B4)") => true)))
 
 (defn create-temp-file! []
   (let [temp-dir  (io/file (System/getProperty "java.io.tmpdir"))]
@@ -47,15 +50,19 @@
       (:workbook write-result) => #(instance? XSSFWorkbook %)
       (:output-stream write-result) => #(instance? FileOutputStream %)))
   (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234
+                      :formula nil
                       :style {:horizontal :fill :vertical :justify}}
                      {:coord {:row 0 :col 1 :sheet "S1"} :value 5678
+                      :formula nil
                       :style {:bottom-border {:style :dashed :colour :gold}
                               :left-border {:style :hair :colour :white}
                               :right-border {:style :medium :colour :black}
                               :top-border {:style :thick :colour :yellow}}}
                      {:coord {:row 1 :col 0 :sheet "S1"} :value "AB"
+                      :formula nil
                       :style {:background-colour :yellow}}
                      {:coord {:row 1 :col 1 :sheet "S1"} :value "XY"
+                      :formula nil
                       :style {:bold        true
                               :italic      true
                               :underline   true
@@ -64,12 +71,16 @@
                               :font-size   12
                               :font-name   "Arial"}}
                      {:coord {:row 2 :col 0 :sheet "S2"} :value 3.14
+                      :formula nil
                       :style {:data-format "@"}}
                      {:coord {:row 2 :col 1 :sheet "S2"} :value 2.71
+                      :formula nil
                       :style {:data-format "non-builtin"}}
                      {:coord {:row 3 :col 0 :sheet "S2"} :value true
+                      :formula nil
                       :style {:row-size 10}}
                      {:coord {:row 3 :col 1 :sheet "S2"} :value false
+                      :formula nil
                       :style {:col-size 15}}]
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Write and read cells should have the same count"
@@ -112,14 +123,15 @@
     (fact "Non-builtin data format should be dropped"
       (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
         (contains? data-formats "non-builtin") => false)))
-  (let [write-cells [{:coord {:row 0 :col 0} :value 12345 :style {}}
-                     {:coord {:row 0 :col 0} :value "abc" :style {}}]
+  (let [write-cells [{:coord {:row 0 :col 0} :value 12345 :formula nil :style {}}
+                     {:coord {:row 0 :col 0} :value "abc" :formula nil :style {}}]
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Overwrite cells should work correctly"
       (count read-cells) => 1
       (-> read-cells first :value) => "abc"))
-  (let [write-cells [{:value "abcdefghijklmnopqrstuvwxyz"
-                      :coord {:row 1 :col 2}
-                      :style {:col-size :auto}}]
+  (let [write-cells [{:value   "abcdefghijklmnopqrstuvwxyz"
+                      :formula nil
+                      :coord   {:row 1 :col 2}
+                      :style   {:col-size :auto}}]
         read-cells (write-then-read-xlsx! write-cells)]
     (-> read-cells first :style :col-size) => #(< 8 %)))

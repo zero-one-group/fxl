@@ -13,6 +13,8 @@
     (s/valid? ::fs/cell (fxl/->cell {:coord {:row 0 :col 0}})) => true)
   (fact "Should return valid cell from only value"
     (s/valid? ::fs/cell (fxl/->cell {:value "abc"})) => true)
+  (fact "Should return valid cell from only formula"
+    (s/valid? ::fs/cell (fxl/->cell {:formula nil})) => true)
   (fact "Should return valid cell from only style"
     (s/valid? ::fs/cell (fxl/->cell {:style {}})) => true))
 

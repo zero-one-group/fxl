@@ -32,15 +32,18 @@
 
 (facts "On fxl min-row-size and max-col-size"
   (fact "Should not allow invalid min and max row sizes"
-    {:value nil
-     :coord {:row 0 :col 0}
-     :style {:row-size nil}} => (fs/invalid? ::fs/cell)
-    {:value nil
-     :coord {:row 0 :col 0}
-     :style {:col-size "abc"}} => (fs/invalid? ::fs/cell)
-    {:value nil
-     :coord {:row 0 :col 0}
-     :style {:col-size :auto}} => (fs/valid? ::fs/cell)))
+    {:value   nil
+     :formula nil
+     :coord   {:row 0 :col 0}
+     :style   {:row-size nil}} => (fs/invalid? ::fs/cell)
+    {:value   nil
+     :formula nil
+     :coord   {:row 0 :col 0}
+     :style   {:col-size "abc"}} => (fs/invalid? ::fs/cell)
+    {:value   nil
+     :formula nil
+     :coord   {:row 0 :col 0}
+     :style   {:col-size :auto}} => (fs/valid? ::fs/cell)))
 
 (facts "On fxl font styles"
   (fact "Should allow example font style"
@@ -107,20 +110,24 @@
 
 (facts "On fxl cells"
   (fact "Should allow example map"
-    (fs/valid? ::fs/cell {:coord {:row 1 :col 1}
-                          :value "abc"
-                          :style {}})
+    (fs/valid? ::fs/cell {:coord   {:row 1 :col 1}
+                          :value   "abc"
+                          :formula nil
+                          :style   {}})
     => true)
   (fact "Should not allow incorrect coord"
-    (fs/invalid? ::fs/cell {:coord {:row 1 :col "abc"}
-                            :value "abc"
-                            :style {}})
+    (fs/invalid? ::fs/cell {:coord   {:row 1 :col "abc"}
+                            :value   "abc"
+                            :formula nil
+                            :style   {}})
     => true)
   (fact "Should not allow incorrect value"
-    (fs/invalid? ::fs/cell {:coord {:row 1 :col 2}
-                            :value [1 2]
-                            :style {}})
+    (fs/invalid? ::fs/cell {:coord   {:row 1 :col 2}
+                            :value   [1 2]
+                            :formula nil
+                            :style   {}})
     => true)
   (fact "Should not allow missing style"
-    (fs/invalid? ::fs/cell {:coord {:row 1 :col 2} :value [1 2]})
+    (fs/invalid? ::fs/cell {:coord {:row 1 :col 2}
+                            :value [1 2] :formula nil})
     => true))

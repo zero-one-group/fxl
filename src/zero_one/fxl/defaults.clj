@@ -4,6 +4,8 @@
 
 (def value nil)
 
+(def formula nil)
+
 (def coord {:row 0 :col 0})
 
 (def style
@@ -31,6 +33,7 @@
 
 
 (def cell
-  {:value value
-   :coord coord
-   :style style})
+  {:value   value
+   :formula formula
+   :coord   coord
+   :style   style})

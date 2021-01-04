@@ -68,14 +68,16 @@
                             ::row-size
                             ::col-size])))
 
-;; Cell Value
+;; Cell Value and Formula
 (s/def ::value (s/nilable (s/or :string  string?
                                 :number  number?
                                 :boolean boolean?)))
 
+(s/def ::formula (s/nilable string?))
+
 ;; Cell
 (s/def ::cell
-  (s/keys :req-un [::value ::coord ::style]))
+  (s/keys :req-un [::value ::formula ::coord ::style]))
 
 ;; Handy Functions
 (defn valid?

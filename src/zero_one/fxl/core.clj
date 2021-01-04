@@ -28,17 +28,17 @@
 ;; Helper Functions: Ordered -> Unordered
 (defn row->cells [row]
   (for [[index elem] (zip-with-index row)]
-    {:value elem :coord {:row 0 :col index} :style {}}))
+    {:value elem :formula nil :coord {:row 0 :col index} :style {}}))
 
 (defn col->cells [col]
   (for [[index elem] (zip-with-index col)]
-    {:value elem :coord {:row index :col 0} :style {}}))
+    {:value elem :formula nil :coord {:row index :col 0} :style {}}))
 
 (defn table->cells [table]
   (flatten
     (for [[row-index row] (zip-with-index table)]
       (for [[col-index elem] (zip-with-index row)]
-        {:value elem :coord {:row row-index :col col-index} :style {}}))))
+        {:value elem :formula nil :coord {:row row-index :col col-index} :style {}}))))
 
 (defn records->table
   ([records]
@@ -141,7 +141,7 @@
         pad-cells (for [[row col] indices
                         :let  [coord {:row row :col col}]
                         :when (not (contains? coords coord))]
-                    {:value nil :coord coord :style {}})]
+                    {:value nil :formula nil :coord coord :style {}})]
     (concat cells pad-cells)))
 
 ;; Style Utilities

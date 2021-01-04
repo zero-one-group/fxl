@@ -36,12 +36,13 @@ What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docju
 
 ## Map Representation of Cells
 
-A `fxl` cell is represented by a map that tells us its value, location and style. For instance:
+A `fxl` cell is represented by a map that tells us its value, formula, location and style. For instance:
 
 ```clojure
-{:value -2.2
- :coord {:row 4 :col 3 :sheet "Growth"}
- :style {:data-format "0.00%" :background-colour :yellow}}
+{:value   -2.2
+ :formula nil
+ :coord   {:row 4 :col 3 :sheet "Growth"}
+ :style   {:data-format "0.00%" :background-colour :yellow}}
 ```
 
 is rendered as a highlighted cell with a value of "-2.2%" on the fifth row and fourth column of a sheet called "Growth".
@@ -81,21 +82,21 @@ We would break the spreadsheet down into three components, namely the header, th
 (require '[zero-one.fxl.core :as fxl])
 
 (def header-cells
-  [{:value "Item" :coord {:row 0 :col 0} :style {}}
-   {:value "Cost" :coord {:row 0 :col 1} :style {}}])
+  [{:value "Item" :formula nil :coord {:row 0 :col 0} :style {}}
+   {:value "Cost" :formula nil :coord {:row 0 :col 1} :style {}}])
 
 (def body-cells
   (flatten
     (for [[row cost] (map vector (range) costs)]
       (list
-        {:value (:item cost) :coord {:row (inc row) :col 0} :style {}}
-        {:value (:cost cost) :coord {:row (inc row) :col 1} :style {}}))))
+        {:value (:item cost) :formula nil :coord {:row (inc row) :col 0} :style {}}
+        {:value (:cost cost) :formula nil :coord {:row (inc row) :col 1} :style {}}))))
 
 (def total-cells
   (let [row        (count costs)
         total-cost (apply + (map :cost costs))]
-    [{:value "Total"    :coord {:row (+ row 2) :col 0} :style {}}
-     {:value total-cost :coord {:row (+ row 2) :col 1} :style {}}]))
+    [{:value "Total"    :formula nil :coord {:row (+ row 2) :col 0} :style {}}
+     {:value total-cost :formula nil :coord {:row (+ row 2) :col 1} :style {}}]))
 
 (fxl/write-xlsx!
   (concat header-cells body-cells total-cells)

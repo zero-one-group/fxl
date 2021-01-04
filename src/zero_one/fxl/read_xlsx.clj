@@ -22,6 +22,16 @@
                   (catch Exception _ (.getRawValue cell)))
       nil)))
 
+(defn- extract-cell-formula [cell]
+  (let [cell-type (.. cell getCellType name)]
+    (case cell-type
+      "NUMERIC" nil
+      "STRING"  nil
+      "BOOLEAN" nil
+      "ERROR"   (.getErrorCellString cell)
+      "FORMULA" (.getCellFormula cell)
+      nil)))
+
 (defn- extract-cell-border-style [cell]
   (let [cell-style (.getCellStyle cell)]
     {:bottom-border
@@ -99,8 +109,9 @@
     {:coord {:row   (.getRowNum poi-row)
              :col   (.getColumnIndex poi-cell)
              :sheet (.. poi-row getSheet getSheetName)}
-      :value (extract-cell-value poi-cell)
-      :style (extract-cell-style workbook poi-cell)}))
+     :value   (extract-cell-value poi-cell)
+     :formula (extract-cell-formula poi-cell)
+     :style   (extract-cell-style workbook poi-cell)}))
 
 (defn- throwable-read-xlsx! [path]
   (let [input-stream (FileInputStream. path)
