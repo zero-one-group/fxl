@@ -27,7 +27,8 @@
       (contains? (->> styles (map :vertical) set) :center) => true)
     (fact "Data formats should be extracted"
       (->> styles (map :data-format) count) => #(< 1 %))
-    ;; TODO: background-colour seems to be undetected!
+    (fact "Background colour should be extracted"
+      (contains? (->> styles (map :background-colour) set) :yellow) => true)
     (fact "Values should be extracted"
       (contains? values 1.4142) => true)))
 
