@@ -59,7 +59,7 @@
     value-objs))
 
 (defn read-google-sheets! [service spreadsheet-id sheet-name]
-  (-> (sheet-values! service spreadsheet-id sheet-name) 
+  (-> (sheet-values! service spreadsheet-id sheet-name)
       fxl/table->cells))
 
 (comment
@@ -68,8 +68,5 @@
         spreadsheet-id "1_8g_ItFMIgpCMFIQ1L1CTRhF4oKsjTs4zYe0UMRSd-w"
         sheet-names    (sheet-names! service spreadsheet-id)
         cells          (read-google-sheets! service spreadsheet-id (first sheet-names))
-        values         (->> cells (map :value) set)
-        ]
-    (sheet-values! service spreadsheet-id (first sheet-names))
-    )
-  )
+        values         (->> cells (map :value) set)]
+    (sheet-values! service spreadsheet-id (first sheet-names))))
