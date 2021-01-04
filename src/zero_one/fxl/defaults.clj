@@ -12,7 +12,7 @@
   :italic            false,
   :underline         false,
   :strikeout         false
-  :font-size         12,
+  :font-size         11,
   :font-name         "Calibri",
   :font-colour       :black1,
   ; Alignments
