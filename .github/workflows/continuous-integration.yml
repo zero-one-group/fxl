@@ -15,6 +15,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - run: 'echo "$FXL_CI" > resources/credentials.json'
+        shell: bash
+        env:
+          FXL_CI: ${{secrets.FXL_CI}}
       - name: unit-tests
         uses: docker://zeroonetechnology/fxl:latest
         with:
