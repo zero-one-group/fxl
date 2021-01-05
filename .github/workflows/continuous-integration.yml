@@ -4,12 +4,7 @@ on:
   push:
     branches:
       - develop
-  pull_request:
-    branches:
-      - develop
   pull_request_target:
-    branches:
-      - develop
   schedule:
     - cron: '0 0 * * *'
 
