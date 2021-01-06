@@ -36,7 +36,7 @@ What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docju
 
 ## Map Representation of Cells
 
-A `fxl` cell is represented by a map that tells us its value, location and style. Style is optional. For instance:
+A `fxl` cell is represented by a map that tells us its value, location and style. For instance:
 
 ```clojure
 {:value -2.2
