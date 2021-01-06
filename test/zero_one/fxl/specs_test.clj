@@ -122,5 +122,6 @@
                             :style {}})
     => true)
   (fact "Should not allow missing style"
-    (fs/invalid? ::fs/cell {:coord {:row 1 :col 2} :value [1 2]})
+    (fs/invalid? ::fs/cell {:coord {:row 1 :col 2}
+                            :value "abc"})
     => true))
