@@ -81,28 +81,30 @@ We would break the spreadsheet down into three components, namely the header, th
 (require '[zero-one.fxl.core :as fxl])
 
 (def header-cells
-  [{:value "Item" :coord {:row 0 :col 0}}
-   {:value "Cost" :coord {:row 0 :col 1}}])
+  [{:value "Item" :coord {:row 0 :col 0} :style {}}
+   {:value "Cost" :coord {:row 0 :col 1} :style {}}])
 
 (def body-cells
   (flatten
     (for [[row cost] (map vector (range) costs)]
       (list
-        {:value (:item cost) :coord {:row (inc row) :col 0}}
-        {:value (:cost cost) :coord {:row (inc row) :col 1}}))))
+        {:value (:item cost) :coord {:row (inc row) :col 0} :style {}}
+        {:value (:cost cost) :coord {:row (inc row) :col 1} :style {}}))))
 
 (def total-cells
   (let [row        (count costs)
         total-cost (apply + (map :cost costs))]
-    [{:value "Total"    :coord {:row (+ row 2) :col 0}}
-     {:value total-cost :coord {:row (+ row 2) :col 1}}]))
+    [{:value "Total"    :coord {:row (+ row 2) :col 0} :style {}}
+     {:value total-cost :coord {:row (+ row 2) :col 1} :style {}}]))
 
 (fxl/write-xlsx!
   (concat header-cells body-cells total-cells)
   "examples/spreadsheets/write_to_plain_excel.xlsx")
 ```
 
-This works, but dealing with the coordinates are fiddly. We can make the intent clearer using `fxl` helper functions.
+In fact, style is optional, so we can actually remove `:style {}` from all the maps.
+
+While both these methods work, dealing with the coordinates can be fiddly. We can make the intent clearer using `fxl` helper functions.
 
 ## Creating Simple Spreadsheets with Helper Functions
 
