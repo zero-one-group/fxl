@@ -7,21 +7,21 @@
    {:item "Gym"  :cost 50}])
 
 (def header-cells
-  [{:value "Item" :coord {:row 0 :col 0} :style {}}
-   {:value "Cost" :coord {:row 0 :col 1} :style {}}])
+  [{:value "Item" :coord {:row 0 :col 0}}
+   {:value "Cost" :coord {:row 0 :col 1}}])
 
 (def body-cells
   (flatten
     (for [[row cost] (map vector (range) costs)]
       (list
-        {:value (:item cost) :coord {:row (inc row) :col 0} :style {}}
-        {:value (:cost cost) :coord {:row (inc row) :col 1} :style {}}))))
+        {:value (:item cost) :coord {:row (inc row) :col 0}}
+        {:value (:cost cost) :coord {:row (inc row) :col 1}}))))
 
 (def total-cells
   (let [row        (count costs)
         total-cost (apply + (map :cost costs))]
-    [{:value "Total"    :coord {:row (+ row 2) :col 0} :style {}}
-     {:value total-cost :coord {:row (+ row 2) :col 1} :style {}}]))
+    [{:value "Total"    :coord {:row (+ row 2) :col 0}}
+     {:value total-cost :coord {:row (+ row 2) :col 1}}]))
 
 (fxl/write-xlsx!
   (concat header-cells body-cells total-cells)

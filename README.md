@@ -36,7 +36,7 @@ What `fxl` attempts to do differently to [docjure](https://github.com/mjul/docju
 
 ## Map Representation of Cells
 
-A `fxl` cell is represented by a map that tells us its value, location and style. For instance:
+A `fxl` cell is represented by a map that tells us its value, location and style. Style is optional. For instance:
 
 ```clojure
 {:value -2.2
@@ -81,21 +81,21 @@ We would break the spreadsheet down into three components, namely the header, th
 (require '[zero-one.fxl.core :as fxl])
 
 (def header-cells
-  [{:value "Item" :coord {:row 0 :col 0} :style {}}
-   {:value "Cost" :coord {:row 0 :col 1} :style {}}])
+  [{:value "Item" :coord {:row 0 :col 0}}
+   {:value "Cost" :coord {:row 0 :col 1}}])
 
 (def body-cells
   (flatten
     (for [[row cost] (map vector (range) costs)]
       (list
-        {:value (:item cost) :coord {:row (inc row) :col 0} :style {}}
-        {:value (:cost cost) :coord {:row (inc row) :col 1} :style {}}))))
+        {:value (:item cost) :coord {:row (inc row) :col 0}}
+        {:value (:cost cost) :coord {:row (inc row) :col 1}}))))
 
 (def total-cells
   (let [row        (count costs)
         total-cost (apply + (map :cost costs))]
-    [{:value "Total"    :coord {:row (+ row 2) :col 0} :style {}}
-     {:value total-cost :coord {:row (+ row 2) :col 1} :style {}}]))
+    [{:value "Total"    :coord {:row (+ row 2) :col 0}}
+     {:value total-cost :coord {:row (+ row 2) :col 1}}]))
 
 (fxl/write-xlsx!
   (concat header-cells body-cells total-cells)

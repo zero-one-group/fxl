@@ -75,7 +75,8 @@
 
 ;; Cell
 (s/def ::cell
-  (s/keys :req-un [::value ::coord ::style]))
+  (s/keys :req-un [::value ::coord]
+          :opt-un [::style]))
 
 ;; Handy Functions
 (defn valid?
