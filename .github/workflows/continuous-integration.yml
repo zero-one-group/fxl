@@ -5,8 +5,7 @@ on:
     branches:
       - develop
   pull_request_target:
-    branches:
-      - develop
+    branches: [develop]
   schedule:
     - cron: '0 0 * * *'
 
