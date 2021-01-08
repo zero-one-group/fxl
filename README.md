@@ -102,7 +102,9 @@ We would break the spreadsheet down into three components, namely the header, th
   "examples/spreadsheets/write_to_plain_excel.xlsx")
 ```
 
-This works, but dealing with the coordinates are fiddly. We can make the intent clearer using `fxl` helper functions.
+In fact, style is optional, so we can actually remove `:style {}` from all the maps.
+
+While both these methods work, dealing with the coordinates can be fiddly. We can make the intent clearer using `fxl` helper functions.
 
 ## Creating Simple Spreadsheets with Helper Functions
 
