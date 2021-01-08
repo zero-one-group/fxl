@@ -5,3 +5,4 @@ lein cloverage \
     --codecov \
     --html \
     --runner :midje
+    --ns-exclude-regex "zero-one.fxl.google-sheets"
