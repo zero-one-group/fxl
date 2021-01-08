@@ -3,7 +3,10 @@
   :url "https://gitlab.com/zero-one-open-source/fxl"
   :license {:name "Apache License"
             :url  "https://www.apache.org/licenses/LICENSE-2.0"}
-  :dependencies [[expound "0.8.7"]
+  :dependencies [[com.google.api-client/google-api-client "1.31.1"]
+                 [com.google.apis/google-api-services-sheets "v4-rev20201130-1.31.0"]
+                 [com.google.oauth-client/google-oauth-client-jetty "1.31.2"]
+                 [expound "0.8.7"]
                  [failjure "2.1.1"]
                  [org.apache.poi/poi-ooxml "4.1.2"]
                  [org.clojure/math.combinatorics "0.1.6"]]

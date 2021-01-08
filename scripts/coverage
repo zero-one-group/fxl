@@ -4,5 +4,4 @@ lein cloverage \
     --fail-threshold 99 \
     --codecov \
     --html \
-    --runner :midje \
-    --ns-exclude-regex "zero-one.fxl.google-sheets"
+    --runner :midje
