@@ -10,9 +10,10 @@
     [org.apache.poi.xssf.usermodel XSSFWorkbook]))
 
 (facts "On fxl/read-xlsx"
-  (let [cells  (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
-        values (->> cells (map :value) set)
-        styles (->> cells (map :style) set)]
+  (let [cells   (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
+        formula (->> cells (map :formula) set)
+        values  (->> cells (map :value) set)
+        styles  (->> cells (map :style) set)]
     (fact "Read cells should all be valid"
       (filter #(not (s/valid? ::fs/cell %)) cells) => ())
     (fact "There should be 23 cells"
@@ -30,7 +31,9 @@
     (fact "Background colour should be extracted"
       (contains? (->> styles (map :background-colour) set) :yellow) => true)
     (fact "Values should be extracted"
-      (contains? values 1.4142) => true)))
+      (contains? values 1.4142) => true)
+    (fact "Formulas should be extracted"
+      (contains? formula "PRODUCT(B2:B4)") => true)))
 
 (defn create-temp-file! []
   (let [temp-dir  (io/file (System/getProperty "java.io.tmpdir"))]
