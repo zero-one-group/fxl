@@ -111,17 +111,17 @@
                           :value "abc"
                           :style {}})
     => true)
-  (fact "Should not allow incorrect coord"
-    (fs/invalid? ::fs/cell {:coord {:row 1 :col "abc"}
-                            :value "abc"
-                            :style {}})
+  (fact "Style should be optional"
+    (fs/valid? ::fs/cell {:coord {:row 1 :col 2}
+                          :value "abc"})
     => true)
   (fact "Should not allow incorrect value"
     (fs/invalid? ::fs/cell {:coord {:row 1 :col 2}
                             :value [1 2]
                             :style {}})
     => true)
-  (fact "Should not allow missing style"
-    (fs/invalid? ::fs/cell {:coord {:row 1 :col 2}
-                            :value "abc"})
+  (fact "Should not allow incorrect coord"
+    (fs/invalid? ::fs/cell {:coord {:row 1 :col "abc"}
+                            :value "abc"
+                            :style {}})
     => true))
