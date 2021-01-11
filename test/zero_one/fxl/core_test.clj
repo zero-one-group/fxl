@@ -27,7 +27,7 @@
     (fact "Alignment style should be extracted"
       (contains? (->> styles (map :vertical) set) :center) => true)
     (fact "Data formats should be extracted"
-      (->> styles (map :data-format) count) => #(< 1 %))
+      (contains? (->> styles (map :data-format) set) "0.00") => true)
     (fact "Background colour should be extracted"
       (contains? (->> styles (map :background-colour) set) :yellow) => true)
     (fact "Values should be extracted"
@@ -49,6 +49,10 @@
     (fact "Should return a workbook and an output stream"
       (:workbook write-result) => #(instance? XSSFWorkbook %)
       (:output-stream write-result) => #(instance? FileOutputStream %)))
+  (let [original-dummy (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
+        written-dummy (write-then-read-xlsx! original-dummy)]
+    (fact "Perserve dummy-spreadsheet data on write"
+      (= original-dummy written-dummy) => true))
   (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234
                       :style {:horizontal :fill :vertical :justify}}
                      {:coord {:row 0 :col 1 :sheet "S1"} :value 5678
