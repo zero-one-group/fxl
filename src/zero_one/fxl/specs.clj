@@ -73,10 +73,12 @@
                                 :number  number?
                                 :boolean boolean?)))
 
+(s/def ::formula (s/nilable string?))
+
 ;; Cell
 (s/def ::cell
   (s/keys :req-un [::value ::coord]
-          :opt-un [::style]))
+          :opt-un [::style ::formula]))
 
 ;; Handy Functions
 (defn valid?

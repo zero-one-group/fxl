@@ -14,7 +14,9 @@
   (fact "Should return valid cell from only value"
     (s/valid? ::fs/cell (fxl/->cell {:value "abc"})) => true)
   (fact "Should return valid cell from only style"
-    (s/valid? ::fs/cell (fxl/->cell {:style {}})) => true))
+    (s/valid? ::fs/cell (fxl/->cell {:style {}})) => true)
+  (fact "Should return valid cell from only formula"
+    (s/valid? ::fs/cell (fxl/->cell {:formula nil})) => true))
 
 (facts "On shift functions"
   (let [cell (fxl/->cell {:value 123 :coord {:row 5 :col 5}})]

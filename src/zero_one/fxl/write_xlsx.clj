@@ -121,6 +121,7 @@
         poi-cell  (get-or-create-cell! cell row)
         style     ((:cell-styles context) (:style cell))]
     (.setCellValue poi-cell (ensure-settable (:value cell)))
+    (.setCellFormula poi-cell (:formula cell))
     (.setCellStyle poi-cell style)))
 
 (defn- set-row-height! [workbook coord row-size]

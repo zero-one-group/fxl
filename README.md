@@ -170,7 +170,6 @@ Features:
     - Column width and row heights.
     - Freezing panes.
     - Excel coords -> index coords.
-    - Support for formulae.
     - Support merged cells.
     - Support data-val cells.
 - Support to Google Sheet API.

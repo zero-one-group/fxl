@@ -109,19 +109,22 @@
   (fact "Should allow example map"
     (fs/valid? ::fs/cell {:coord {:row 1 :col 1}
                           :value "abc"
-                          :style {}})
+                          :style {}
+                          :formula nil})
     => true)
-  (fact "Style should be optional"
+  (fact "Style and formula should be optional"
     (fs/valid? ::fs/cell {:coord {:row 1 :col 2}
                           :value "abc"})
     => true)
   (fact "Should not allow incorrect value"
     (fs/invalid? ::fs/cell {:coord {:row 1 :col 2}
                             :value [1 2]
-                            :style {}})
+                            :style {}
+                            :formula nil})
     => true)
   (fact "Should not allow incorrect coord"
     (fs/invalid? ::fs/cell {:coord {:row 1 :col "abc"}
                             :value "abc"
-                            :style {}})
+                            :style {}
+                            :formula nil})
     => true))
