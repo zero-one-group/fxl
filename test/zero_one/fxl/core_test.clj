@@ -50,9 +50,9 @@
       (:workbook write-result) => #(instance? XSSFWorkbook %)
       (:output-stream write-result) => #(instance? FileOutputStream %)))
   (let [original-dummy (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
-        written-dummy (write-then-read-xlsx! original-dummy)]
+        new-dummy (write-then-read-xlsx! original-dummy)]
     (fact "Perserve dummy-spreadsheet data on write"
-      (= original-dummy written-dummy) => true))
+      (= original-dummy new-dummy) => true))
   (let [write-cells [{:coord {:row 0 :col 0 :sheet "S1"} :value 1234
                       :style {:horizontal :fill :vertical :justify}}
                      {:coord {:row 0 :col 1 :sheet "S1"} :value 5678

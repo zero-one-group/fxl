@@ -1,6 +1,5 @@
 (require '[zero-one.fxl.core :as fxl])
 
-;; Output from
 ;; (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
 
 (def cells '({:coord {:row 0, :col 0, :sheet "Sheet1"},
