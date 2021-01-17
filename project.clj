@@ -4,6 +4,7 @@
   :license {:name "Apache License"
             :url  "https://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [[com.google.api-client/google-api-client "1.31.2"]
+                 [com.google.api-client/google-api-client-jackson2 "1.31.2"]
                  [com.google.apis/google-api-services-sheets "v4-rev20201130-1.31.0"]
                  [com.google.oauth-client/google-oauth-client-jetty "1.31.4"]
                  [expound "0.8.7"]
