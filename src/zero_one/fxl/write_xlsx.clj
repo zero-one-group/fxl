@@ -10,7 +10,8 @@
   (:import
     (java.io FileOutputStream)
     (org.apache.poi.xssf.usermodel XSSFWorkbook)
-    (org.apache.poi.ss.usermodel FillPatternType FontUnderline)))
+    (org.apache.poi.ss.usermodel FillPatternType FontUnderline)
+    (org.apache.poi.ss.util CellRangeAddress)))
 
 ;; Apache POI Navigation
 (defn- get-or-create-sheet! [cell workbook]
@@ -115,6 +116,21 @@
    :min-col-sizes (grouped-min-size :col cells)
    :cell-styles   (reduce #(accumulate-style-cache! workbook %1 %2) {} cells)})
 
+(defn- create-merged-region! [cell sheet]
+  (let [first-row (-> cell :coord :row)
+        last-row (-> cell :coord :lrow)
+        first-col (-> cell :coord :col)
+        last-col (-> cell :coord :lcol)
+        cell-range-address (CellRangeAddress.
+                             first-row last-row
+                             first-col last-col)]
+    (.addMergedRegion sheet cell-range-address)))
+
+(defn- merged-cell? [cell]
+  (let [coord (:coord cell)]
+    (and (contains? coord :lrow)
+      (contains? coord :lcol))))
+
 (defn- set-cell-value-and-style! [context workbook cell]
   (let [sheet     (get-or-create-sheet! cell workbook)
         row       (get-or-create-row! cell sheet)
@@ -122,7 +138,9 @@
         style     ((:cell-styles context) (:style cell))]
     (.setCellValue poi-cell (ensure-settable (:value cell)))
     (.setCellFormula poi-cell (:formula cell))
-    (.setCellStyle poi-cell style)))
+    (.setCellStyle poi-cell style)
+    (when (merged-cell? cell)
+      (create-merged-region! cell sheet))))
 
 (defn- set-row-height! [workbook coord row-size]
   (let [row-index (:row coord)
