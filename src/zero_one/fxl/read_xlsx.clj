@@ -104,49 +104,51 @@
          (mapcat ->seq)
          (mapcat ->seq))))
 
-(defn- poi-cell->fxl-cell [workbook poi-cell index]
-  (let [testt {:coord {:row   (.getRowIndex poi-cell)
-                       :col   (.getColumnIndex poi-cell)
-                       :sheet (.. poi-cell getSheet getSheetName)}
-               :value   (extract-cell-value poi-cell)
-               :formula (extract-cell-formula poi-cell)
-               :style   (extract-cell-style workbook poi-cell)}]
-    ;; add additional pair of coord for merged cell
-    (let [{{:keys [row col sheet]} :coord} testt]
-      (if-let [{:keys [lrow lcol]} (get index [row col sheet])]
-        (update-in testt [:coord]
-                   assoc :lrow lrow :lcol lcol)
-        testt))))
+(defn- extract-cell-coord [merged-cell-index poi-cell]
+  (let [common {:row (.getRowIndex poi-cell)
+                :col  (.getColumnIndex poi-cell)
+                :sheet (.. poi-cell getSheet getSheetName)}]
+    (if (contains? merged-cell-index common)
+      (get merged-cell-index common)
+      common)))
+
+(defn- poi-cell->fxl-cell [merged-cell-index workbook poi-cell]
+  {:coord   (extract-cell-coord merged-cell-index poi-cell)
+   :value   (extract-cell-value poi-cell)
+   :formula (extract-cell-formula poi-cell)
+   :style   (extract-cell-style workbook poi-cell)})
+
+(defn- sheet->merged-cell-index [sheet]
+  (let [merged-cells (.getMergedRegions sheet)
+        sheet-name   (.getSheetName sheet)]
+    (->> merged-cells
+         (map #(hash-map {:row   (.getFirstRow %)
+                          :col   (.getFirstColumn %)
+                          :sheet sheet-name}
+                         {:row   (.getFirstRow %)
+                          :col   (.getFirstColumn %)
+                          :lrow  (.getLastRow %)
+                          :lcol  (.getLastColumn %)
+                          :sheet sheet-name}))
+         (into {}))))
 
 (defn- extract-merged-cell-index [workbook]
-  (let [workbook     (first workbook)
-        sheet-number (.getNumberOfSheets workbook)
-        sheet-names  (map #(.getSheetName workbook %)
-                          (range sheet-number))
-        merged-cells (->> sheet-names
-                          (map #(.getSheet workbook %))
-                          (map #(.getMergedRegions %)))
-        sheet-name->merged-cells (zipmap sheet-names merged-cells)]
-    (->> sheet-name->merged-cells
-         (map (fn [[sheet-name merged-cells]]
-                (->> merged-cells
-                     (map (fn [merged-cell]
-                            [[(.getFirstRow merged-cell)
-                              (.getFirstColumn merged-cell)
-                              sheet-name]
-                             {:lrow (.getLastRow merged-cell)
-                              :lcol (.getLastColumn merged-cell)}]))
-                     (into {}))))
+  (let [sheets (->> (range (.getNumberOfSheets workbook))
+                    (map #(.getSheetName workbook %))
+                    (map #(.getSheet workbook %)))]
+    (->> sheets
+         (map sheet->merged-cell-index)
          (into {}))))
+
+(defn- extract-fxl-cells [workbook poi-cells]
+  (let [index (extract-merged-cell-index workbook)]
+    (map #(poi-cell->fxl-cell index workbook %) poi-cells)))
 
 (defn- throwable-read-xlsx! [path]
   (let [input-stream      (FileInputStream. path)
         workbook          (XSSFWorkbook. input-stream)
         poi-cells         (extract-poi-cells workbook)
-        merged-cell-index (extract-merged-cell-index [workbook])
-        cells             (map #(poi-cell->fxl-cell workbook %
-                                                    merged-cell-index)
-                               poi-cells)]
+        cells             (extract-fxl-cells workbook poi-cells)]
     (.close workbook)
     cells))
 
