@@ -145,10 +145,10 @@
     (map #(poi-cell->fxl-cell index workbook %) poi-cells)))
 
 (defn- throwable-read-xlsx! [path]
-  (let [input-stream      (FileInputStream. path)
-        workbook          (XSSFWorkbook. input-stream)
-        poi-cells         (extract-poi-cells workbook)
-        cells             (extract-fxl-cells workbook poi-cells)]
+  (let [input-stream (FileInputStream. path)
+        workbook     (XSSFWorkbook. input-stream)
+        poi-cells    (extract-poi-cells workbook)
+        cells        (extract-fxl-cells workbook poi-cells)]
     (.close workbook)
     cells))
 

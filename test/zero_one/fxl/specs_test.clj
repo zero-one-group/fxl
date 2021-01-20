@@ -19,6 +19,12 @@
     (fs/valid? ::fs/coord {:row 0 :col 1}) => true)
   (fact "Should allow sheet"
     (fs/valid? ::fs/coord {:row 0 :col 1 :sheet "ABC"}) => true)
+  (fact "Should not allow non-string sheet"
+    (fs/invalid? ::fs/coord {:row 0 :col 1 :sheet 123}) => true)
+  (fact "Should not allow negative coords"
+    (fs/invalid? ::fs/coord {:row -1 :col 0}) => true))
+
+(facts "On fxl merged coord"
   (fact "Should allow merged cell"
     (fs/valid? ::fs/coord {:row 0 :col 1 :lrow 1 :lcol 2}) => true)
   (fact "Should allow merged cell w sheet"
@@ -27,14 +33,10 @@
   (fact "Should not allow negative merged cell area"
     (fs/invalid? ::fs/merged-coord {:row 1 :col 1 :lrow 0 :lcol 0
                                     :sheet "ABC"}) => true)
-  (fact "Should not allow non-string sheet"
-    (fs/invalid? ::fs/coord {:row 0 :col 1 :sheet 123}) => true)
-  (fact "Should not allow negative coords"
-    (fs/invalid? ::fs/coord {:row -1 :col 0}) => true))
-
-
-(#(<= (:col %) (:lcol %)) {:row 1 :col 1 :lrow 0 :lcol 0
-                           :sheet "ABC"})
+  (fact "Should not allow only row and col"
+    (fs/invalid? ::fs/merged-coord {:row 0 :col 0}) => true)
+  (fact "Should not allow only lrow and lcol"
+    (fs/invalid? ::fs/merged-coord {:lrow 0 :lcol 0}) => true))
 
 (facts "On fxl data formats"
   (fact "Should allow example format"
