@@ -21,15 +21,15 @@
 
 (defn- get-or-create-row! [cell xl-sheet]
   (let [row-index (or (-> cell :coord :row)
-                    (-> cell :coord :first-row))]
+                      (-> cell :coord :first-row))]
     (or (.getRow xl-sheet row-index)
-      (.createRow xl-sheet row-index))))
+        (.createRow xl-sheet row-index))))
 
 (defn- get-or-create-cell! [cell xl-row]
   (let [col-index (or (-> cell :coord :col)
-                    (-> cell :coord :first-col))]
+                      (-> cell :coord :first-col))]
     (or (.getCell xl-row col-index)
-      (.createCell xl-row col-index))))
+        (.createCell xl-row col-index))))
 
 (defn- ensure-settable [value]
   (if (number? value)
