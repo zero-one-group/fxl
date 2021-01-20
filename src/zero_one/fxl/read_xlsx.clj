@@ -122,14 +122,14 @@
   (let [merged-cells (.getMergedRegions sheet)
         sheet-name   (.getSheetName sheet)]
     (->> merged-cells
-         (map #(hash-map {:row   (.getFirstRow %)
-                          :col   (.getFirstColumn %)
-                          :sheet sheet-name}
-                         {:row   (.getFirstRow %)
-                          :col   (.getFirstColumn %)
-                          :lrow  (.getLastRow %)
-                          :lcol  (.getLastColumn %)
-                          :sheet sheet-name}))
+         (map #(hash-map {:row       (.getFirstRow %)
+                          :col       (.getFirstColumn %)
+                          :sheet     sheet-name}
+                         {:first-row (.getFirstRow %)
+                          :first-col (.getFirstColumn %)
+                          :last-row  (.getLastRow %)
+                          :last-col  (.getLastColumn %)
+                          :sheet     sheet-name}))
          (into {}))))
 
 (defn- extract-merged-cell-index [workbook]

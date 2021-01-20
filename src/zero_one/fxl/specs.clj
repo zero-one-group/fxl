@@ -12,8 +12,10 @@
 (s/def ::row (s/and nat-int? #(<= % max-rows)))
 (s/def ::col (s/and nat-int? #(<= % max-cols)))
 ;; For merged cells
-(s/def ::lrow (s/and nat-int? #(<= % max-rows)))
-(s/def ::lcol (s/and nat-int? #(<= % max-cols)))
+(s/def ::first-row (s/and nat-int? #(<= % max-rows)))
+(s/def ::first-col (s/and nat-int? #(<= % max-cols)))
+(s/def ::last-row (s/and nat-int? #(<= % max-rows)))
+(s/def ::last-col (s/and nat-int? #(<= % max-cols)))
 (s/def ::sheet string?)
 
 (s/def ::plain-coord
@@ -22,14 +24,29 @@
 
 (s/def ::merged-coord
   (s/and
-    (s/keys :req-un [::row ::col ::lrow ::lcol]
-            :opt-un [::sheet])
-    #(<= (:row %) (:lrow %))
-    #(<= (:col %) (:lcol %))))
+    (s/keys :req-un [::first-row ::first-col ::last-row ::last-col]
+      :opt-un [::sheet])
+    #(<= (:first-row %) (:last-row %))
+    #(<= (:first-col %) (:last-col %))))
 
 (s/def ::coord
-  (s/or ::merged-coord
-        ::plain-coord))
+  (s/or :merged ::merged-coord 
+    :plain ::plain-coord))
+
+;; (defn- plain-coord? [coord]
+;;   (and (contains? coord :row)
+;;     (contains? coord :col)))
+
+;; (defn- merged-coord? [coord]
+;;   (and
+;;     (contains? coord :first-row)
+;;     (contains? coord :first-col)
+;;     (contains? coord :last-row)
+;;     (contains? coord :last-col)))
+
+;; (s/def ::coord
+;;   (s/or :merged-coord merged-coord?
+;;     :plain-coord plain-coord?))
 
 ;; Cell Style
 ;;;; Font Style

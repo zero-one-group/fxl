@@ -78,7 +78,8 @@
                       :style {:row-size 10}}
                      {:coord {:row 3 :col 1 :sheet "S2"} :value false
                       :style {:col-size 15}}
-                     {:coord {:row 3 :col 3 :lrow 4 :lcol 4
+                     {:coord {:first-row 3 :first-col 3
+                              :last-row 4  :last-col 4
                               :sheet "S2"} :value "merged-cell"}]
         read-cells  (write-then-read-xlsx! write-cells)]
     (fact "Write and read cells should have the same count"
@@ -123,7 +124,8 @@
         (contains? data-formats "non-builtin") => false))
     (fact "Merged cell should be preserved"
       (let [coords (->> read-cells (map :coord) set)]
-        (contains? coords {:row 3 :col 3 :lrow 4 :lcol 4 :sheet "S2"}))))
+        (contains? coords {:first-row 3 :first-col 3
+                           :last-row 4 :last-col 4 :sheet "S2"}))))
   (let [write-cells [{:coord {:row 0 :col 0} :value 12345 :style {}}
                      {:coord {:row 0 :col 0} :value "abc" :style {}}]
         read-cells  (write-then-read-xlsx! write-cells)]

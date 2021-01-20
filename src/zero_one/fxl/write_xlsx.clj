@@ -20,14 +20,16 @@
         (.createSheet workbook sheet-name))))
 
 (defn- get-or-create-row! [cell xl-sheet]
-  (let [row-index (-> cell :coord :row)]
+  (let [row-index (or (-> cell :coord :row)
+                    (-> cell :coord :first-row))]
     (or (.getRow xl-sheet row-index)
-        (.createRow xl-sheet row-index))))
+      (.createRow xl-sheet row-index))))
 
 (defn- get-or-create-cell! [cell xl-row]
-  (let [col-index (-> cell :coord :col)]
+  (let [col-index (or (-> cell :coord :col)
+                    (-> cell :coord :first-col))]
     (or (.getCell xl-row col-index)
-        (.createCell xl-row col-index))))
+      (.createCell xl-row col-index))))
 
 (defn- ensure-settable [value]
   (if (number? value)
@@ -117,10 +119,10 @@
    :cell-styles   (reduce #(accumulate-style-cache! workbook %1 %2) {} cells)})
 
 (defn- create-merged-region! [cell sheet]
-  (let [first-row (-> cell :coord :row)
-        last-row (-> cell :coord :lrow)
-        first-col (-> cell :coord :col)
-        last-col (-> cell :coord :lcol)
+  (let [first-row (-> cell :coord :first-row)
+        first-col (-> cell :coord :first-col)
+        last-row  (-> cell :coord :last-row)
+        last-col  (-> cell :coord :last-col)
         cell-range-address (CellRangeAddress.
                              first-row last-row
                              first-col last-col)]
@@ -128,8 +130,8 @@
 
 (defn- merged-cell? [cell]
   (let [coord (:coord cell)]
-    (and (contains? coord :lrow)
-      (contains? coord :lcol))))
+    (and (contains? coord :last-row)
+      (contains? coord :last-col))))
 
 (defn- set-cell-value-and-style! [context workbook cell]
   (let [sheet     (get-or-create-sheet! cell workbook)
@@ -143,7 +145,7 @@
       (create-merged-region! cell sheet))))
 
 (defn- set-row-height! [workbook coord row-size]
-  (let [row-index (:row coord)
+  (let [row-index (or (:row coord) (:first-row coord))
         sheet     (.getSheet workbook (:sheet coord))
         row       (.getRow sheet row-index)]
     (.setHeightInPoints row (float row-size))))
