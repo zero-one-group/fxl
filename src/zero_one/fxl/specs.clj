@@ -24,29 +24,14 @@
 
 (s/def ::merged-coord
   (s/and
-    (s/keys :req-un [::first-row ::first-col ::last-row ::last-col]
-      :opt-un [::sheet])
-    #(<= (:first-row %) (:last-row %))
-    #(<= (:first-col %) (:last-col %))))
+   (s/keys :req-un [::first-row ::first-col ::last-row ::last-col]
+           :opt-un [::sheet])
+   #(<= (:first-row %) (:last-row %))
+   #(<= (:first-col %) (:last-col %))))
 
 (s/def ::coord
   (s/or :merged ::merged-coord 
-    :plain ::plain-coord))
-
-;; (defn- plain-coord? [coord]
-;;   (and (contains? coord :row)
-;;     (contains? coord :col)))
-
-;; (defn- merged-coord? [coord]
-;;   (and
-;;     (contains? coord :first-row)
-;;     (contains? coord :first-col)
-;;     (contains? coord :last-row)
-;;     (contains? coord :last-col)))
-
-;; (s/def ::coord
-;;   (s/or :merged-coord merged-coord?
-;;     :plain-coord plain-coord?))
+        :plain ::plain-coord))
 
 ;; Cell Style
 ;;;; Font Style
