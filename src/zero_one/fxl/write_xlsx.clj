@@ -128,7 +128,7 @@
                              first-col last-col)]
     (.addMergedRegion sheet cell-range-address)))
 
-(defn- merged-cell? [cell]
+(defn merged-cell? [cell]
   (let [coord (:coord cell)]
     (and (contains? coord :last-row)
       (contains? coord :last-col))))

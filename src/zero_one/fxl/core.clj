@@ -10,16 +10,23 @@
 
 ;; Utility Functions
 (defn ->cell [maybe-cell]
-  (merge defaults/cell maybe-cell))
+  (list
+    (merge defaults/cell maybe-cell)))
 
 (defn max-col [cells]
   (->> cells
-       (map (comp :col :coord))
+       (map
+         (juxt (comp :col :coord)
+               (comp :last-col :coord)))
+       (#(filter some? (flatten %)))
        (apply max -1)))
 
 (defn max-row [cells]
   (->> cells
-       (map (comp :row :coord))
+       (map
+         (juxt (comp :row :coord)
+               (comp :last-row :coord)))
+       (#(filter some? (flatten %)))
        (apply max -1)))
 
 (defn zip-with-index [coll]
@@ -82,10 +89,29 @@
            (vector k v)))))))
 
 ;; Helper Functions: Relative Coords
-(defn- shift-cell [dir shift cell]
+(def merged-cell? write-xlsx/merged-cell?)
+
+(defn- shift-plain-cell [dir shift cell]
   (let [old-index (get-in cell [:coord dir])
         new-index (max 0 (+ old-index shift))]
     (assoc-in cell [:coord dir] new-index)))
+
+(defn- shift-merged-cell [dir shift cell]
+  (let [first-key  (keyword (str "first-" (symbol dir)))
+        last-key   (keyword (str "last-" (symbol dir)))
+        old-index1 (get-in cell [:coord first-key])
+        old-index2 (get-in cell [:coord last-key])
+        new-index1 (max 0 (+ old-index1 shift))
+        new-index2 (max 0 (+ old-index2 shift))]
+    ;;TODO: rename and do i need max?
+    (-> cell
+        (assoc-in [:coord first-key] new-index1) 
+        (assoc-in [:coord last-key] new-index2))))
+
+(defn- shift-cell [dir shift cell]
+  (if (merged-cell? cell)
+    (shift-merged-cell dir shift cell)
+    (shift-plain-cell dir shift cell)))
 
 (defn shift-right [shift cell]
   (shift-cell :col shift cell))
@@ -114,7 +140,7 @@
   ([shift cells]
    (concat-right
      cells
-     [(->cell {:coord {:row 0 :col (dec shift)} :style {}})])))
+     (->cell {:coord {:row 0 :col (dec shift)} :style {}}))))
 
 (defn concat-below
   ([] nil)
@@ -131,7 +157,7 @@
   ([shift cells]
    (concat-below
      cells
-     [(->cell {:coord {:row (dec shift) :col 0} :style {}})])))
+     (->cell {:coord {:row (dec shift) :col 0} :style {}}))))
 
 (defn pad-table [cells]
   (let [coords    (->> cells (map :coord) set)

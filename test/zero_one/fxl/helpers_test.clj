@@ -34,8 +34,8 @@
       (:coord (fxl/shift-up (- 3) cell)) => {:row 8 :col 5})))
 
 (facts "On concat functions"
-  (let [cells (map fxl/->cell [{:value "abc" :coord {:row 0 :col 0}}
-                               {:value "xyz" :coord {:row 4 :col 4}}])]
+  (let [cells (flatten (map fxl/->cell [{:value "abc" :coord {:row 0 :col 0}}
+                                        {:value "xyz" :coord {:row 4 :col 4}}]))]
     (fact "Correct fxl/concat-right"
       (fxl/concat-right) => nil
       (fxl/concat-right cells) => cells
