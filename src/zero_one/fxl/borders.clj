@@ -1,6 +1,6 @@
 (ns zero-one.fxl.borders
   (:import
-    [org.apache.poi.ss.usermodel BorderStyle]))
+   [org.apache.poi.ss.usermodel BorderStyle]))
 
 (def border-styles
   {:dash_dot            BorderStyle/DASH_DOT

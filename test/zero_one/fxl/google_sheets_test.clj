@@ -18,22 +18,22 @@
         @n-tries))))
 
 (facts "On exponential-backoff"
-       (gs/exponential-backoff {:wait-ms     100
-                                :growth-rate 2
-                                :max-ms      399
-                                :action!     (action-fn 0)}) => 1
-       (gs/exponential-backoff {:wait-ms     100
-                                :growth-rate 2
-                                :max-ms      399
-                                :action!     (action-fn 1)}) => 2
-       (gs/exponential-backoff {:wait-ms     100
-                                :growth-rate 2
-                                :max-ms      399
-                                :action!     (action-fn 2)}) => 3
-       (gs/exponential-backoff {:wait-ms     100
-                                :growth-rate 2
-                                :max-ms      399
-                                :action!     (action-fn 3)}) => (throws Exception))
+  (gs/exponential-backoff {:wait-ms     100
+                           :growth-rate 2
+                           :max-ms      399
+                           :action!     (action-fn 0)}) => 1
+  (gs/exponential-backoff {:wait-ms     100
+                           :growth-rate 2
+                           :max-ms      399
+                           :action!     (action-fn 1)}) => 2
+  (gs/exponential-backoff {:wait-ms     100
+                           :growth-rate 2
+                           :max-ms      399
+                           :action!     (action-fn 2)}) => 3
+  (gs/exponential-backoff {:wait-ms     100
+                           :growth-rate 2
+                           :max-ms      399
+                           :action!     (action-fn 3)}) => (throws Exception))
 
 (defn valid-credentials? []
   (try
@@ -46,13 +46,13 @@
   (defonce service (gs/sheets-service google-props))
 
   (facts "On gs/read-google-sheets!"
-         (let [spreadsheet-id "1_8g_ItFMIgpCMFIQ1L1CTRhF4oKsjTs4zYe0UMRSd-w"
-               sheet-names    (gs/sheet-names! service spreadsheet-id)
-               cells          (gs/read-google-sheets! service spreadsheet-id (first sheet-names))
-               values         (->> cells (map :value) set)]
-           (fact "Read cells should all be valid"
-                 (filter #(not (s/valid? ::fs/cell %)) cells) => ())
-           (fact "There should be 15 cells"
-                 (count cells) => 15)
-           (fact "Values should be extracted"
-                 (contains? values "1.4142") => true))))
+    (let [spreadsheet-id "1_8g_ItFMIgpCMFIQ1L1CTRhF4oKsjTs4zYe0UMRSd-w"
+          sheet-names    (gs/sheet-names! service spreadsheet-id)
+          cells          (gs/read-google-sheets! service spreadsheet-id (first sheet-names))
+          values         (->> cells (map :value) set)]
+      (fact "Read cells should all be valid"
+        (filter #(not (s/valid? ::fs/cell %)) cells) => ())
+      (fact "There should be 15 cells"
+        (count cells) => 15)
+      (fact "Values should be extracted"
+        (contains? values "1.4142") => true))))

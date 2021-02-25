@@ -1,8 +1,8 @@
 (ns zero-one.fxl.specs-test
   (:require
-    [clojure.string :refer [includes?]]
-    [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.specs :as fs]))
+   [clojure.string :refer [includes?]]
+   [midje.sweet :refer [facts fact =>]]
+   [zero-one.fxl.specs :as fs]))
 
 (facts "On valid? and invalid?"
   (fact "Should give correct results"

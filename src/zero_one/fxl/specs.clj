@@ -1,10 +1,10 @@
 (ns zero-one.fxl.specs
   (:require
-    [clojure.spec.alpha :as s]
-    [expound.alpha :as expound]
-    [zero-one.fxl.alignments :refer [horizontal-alignments vertical-alignments]]
-    [zero-one.fxl.borders :refer [border-styles]]
-    [zero-one.fxl.colours :refer [colours]]))
+   [clojure.spec.alpha :as s]
+   [expound.alpha :as expound]
+   [zero-one.fxl.alignments :refer [horizontal-alignments vertical-alignments]]
+   [zero-one.fxl.borders :refer [border-styles]]
+   [zero-one.fxl.colours :refer [colours]]))
 
 ;; Coordinates
 (def max-rows (int 1e5))

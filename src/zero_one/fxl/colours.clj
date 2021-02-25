@@ -1,6 +1,6 @@
 (ns zero-one.fxl.colours
   (:import
-    [org.apache.poi.ss.usermodel IndexedColors]))
+   [org.apache.poi.ss.usermodel IndexedColors]))
 
 (def colours
   {:aqua                  IndexedColors/AQUA

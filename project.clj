@@ -13,6 +13,12 @@
                  [org.clojure/math.combinatorics "0.1.6"]]
   :profiles {:dev {:dependencies [[midje "1.9.9"]]
                    :plugins [[lein-ancient "0.7.0"]
-                             [lein-midje "3.2.2"]
-                             [lein-cloverage "1.2.2"]]}
+                             [lein-cljfmt "0.7.0"]
+                             [lein-cloverage "1.2.2"]
+                             [lein-midje "3.2.2"]]
+                   :cljfmt {:split-keypairs-over-multiple-lines?   false
+                            :remove-multiple-non-indenting-spaces? false
+                            :indents {facts [[:inner 0] [:block 1]]
+                                      forv  [[:inner 0] [:block 1]]
+                                      fact  [[:inner 0] [:block 1]]}}}
              :provided {:dependencies [[org.clojure/clojure "1.10.2"]]}})

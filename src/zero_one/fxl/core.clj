@@ -1,12 +1,12 @@
 (ns zero-one.fxl.core
   (:require
-    [clojure.math.combinatorics :refer [cartesian-product]]
-    [zero-one.fxl.alignments :as alignments]
-    [zero-one.fxl.borders :as borders]
-    [zero-one.fxl.colours :as colours]
-    [zero-one.fxl.defaults :as defaults]
-    [zero-one.fxl.read-xlsx :as read-xlsx]
-    [zero-one.fxl.write-xlsx :as write-xlsx]))
+   [clojure.math.combinatorics :refer [cartesian-product]]
+   [zero-one.fxl.alignments :as alignments]
+   [zero-one.fxl.borders :as borders]
+   [zero-one.fxl.colours :as colours]
+   [zero-one.fxl.defaults :as defaults]
+   [zero-one.fxl.read-xlsx :as read-xlsx]
+   [zero-one.fxl.write-xlsx :as write-xlsx]))
 
 ;; Utility Functions
 (defn ->cell [maybe-cell]
@@ -36,9 +36,9 @@
 
 (defn table->cells [table]
   (flatten
-    (for [[row-index row] (zip-with-index table)]
-      (for [[col-index elem] (zip-with-index row)]
-        {:value elem :coord {:row row-index :col col-index}}))))
+   (for [[row-index row] (zip-with-index table)]
+     (for [[col-index elem] (zip-with-index row)]
+       {:value elem :coord {:row row-index :col col-index}}))))
 
 (defn records->table
   ([records]
@@ -75,11 +75,11 @@
          indexed (group-by :coord cells)]
      (forv [i (range (inc (max-row cells)))]
        (into {}
-         (forv [j (range (inc (max-col cells)))
-                :let  [k (nth ks j nil)
-                       v (-> (indexed {:row i :col j}) first :value)]
-                :when (and k v)]
-           (vector k v)))))))
+             (forv [j (range (inc (max-col cells)))
+                    :let  [k (nth ks j nil)
+                           v (-> (indexed {:row i :col j}) first :value)]
+                    :when (and k v)]
+               (vector k v)))))))
 
 ;; Helper Functions: Relative Coords
 (defn- shift-cell [dir shift cell]
@@ -113,8 +113,8 @@
   ([cells] (pad-right 1 cells))
   ([shift cells]
    (concat-right
-     cells
-     [(->cell {:coord {:row 0 :col (dec shift)} :style {}})])))
+    cells
+    [(->cell {:coord {:row 0 :col (dec shift)} :style {}})])))
 
 (defn concat-below
   ([] nil)
@@ -130,14 +130,14 @@
   ([cells] (pad-below 1 cells))
   ([shift cells]
    (concat-below
-     cells
-     [(->cell {:coord {:row (dec shift) :col 0} :style {}})])))
+    cells
+    [(->cell {:coord {:row (dec shift) :col 0} :style {}})])))
 
 (defn pad-table [cells]
   (let [coords    (->> cells (map :coord) set)
         indices   (cartesian-product
-                    (-> cells max-row inc range)
-                    (-> cells max-col inc range))
+                   (-> cells max-row inc range)
+                   (-> cells max-col inc range))
         pad-cells (for [[row col] indices
                         :let  [coord {:row row :col col}]
                         :when (not (contains? coords coord))]

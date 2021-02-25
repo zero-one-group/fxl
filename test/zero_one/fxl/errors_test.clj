@@ -1,9 +1,9 @@
 (ns zero-one.fxl.errors-test
   (:require
-    [clojure.string :as str]
-    [failjure.core :as f]
-    [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.core :as fxl]))
+   [clojure.string :as str]
+   [failjure.core :as f]
+   [midje.sweet :refer [facts fact =>]]
+   [zero-one.fxl.core :as fxl]))
 
 (defmacro with-out-str-and-value
   ; Source: https://stackoverflow.com/questions/7150776/capturing-the-original-return-value-from-with-out-str

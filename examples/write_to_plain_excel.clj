@@ -12,10 +12,10 @@
 
 (def body-cells
   (flatten
-    (for [[row cost] (map vector (range) costs)]
-      (list
-        {:value (:item cost) :coord {:row (inc row) :col 0} :style {}}
-        {:value (:cost cost) :coord {:row (inc row) :col 1} :style {}}))))
+   (for [[row cost] (map vector (range) costs)]
+     (list
+      {:value (:item cost) :coord {:row (inc row) :col 0} :style {}}
+      {:value (:cost cost) :coord {:row (inc row) :col 1} :style {}}))))
 
 (def total-cells
   (let [row        (count costs)
@@ -24,5 +24,5 @@
      {:value total-cost :coord {:row (+ row 2) :col 1} :style {}}]))
 
 (fxl/write-xlsx!
-  (concat header-cells body-cells total-cells)
-  "examples/spreadsheets/write_to_plain_excel.xlsx")
+ (concat header-cells body-cells total-cells)
+ "examples/spreadsheets/write_to_plain_excel.xlsx")

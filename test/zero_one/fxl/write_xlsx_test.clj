@@ -1,9 +1,9 @@
 (ns zero-one.fxl.write-xlsx-test
   (:require
-    [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.write-xlsx :as write-xlsx])
+   [midje.sweet :refer [facts fact =>]]
+   [zero-one.fxl.write-xlsx :as write-xlsx])
   (:import
-    (org.apache.poi.xssf.usermodel XSSFWorkbook)))
+   (org.apache.poi.xssf.usermodel XSSFWorkbook)))
 
 (def example-cells
   [{:value "X" :coord {:row 0 :col 0} :style {:row-size 1 :col-size 9}}
