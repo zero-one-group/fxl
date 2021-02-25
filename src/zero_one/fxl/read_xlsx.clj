@@ -1,14 +1,14 @@
 (ns zero-one.fxl.read-xlsx
   (:require
-    [failjure.core :as f]
-    [zero-one.fxl.alignments :as alignments]
-    [zero-one.fxl.borders :as borders]
-    [zero-one.fxl.colours :as colours]
-    [zero-one.fxl.defaults :as defaults])
+   [failjure.core :as f]
+   [zero-one.fxl.alignments :as alignments]
+   [zero-one.fxl.borders :as borders]
+   [zero-one.fxl.colours :as colours]
+   [zero-one.fxl.defaults :as defaults])
   (:import
-    [java.io FileInputStream]
-    [org.apache.poi.xssf.usermodel XSSFWorkbook]
-    [org.apache.poi.ss.usermodel Font]))
+   [java.io FileInputStream]
+   [org.apache.poi.xssf.usermodel XSSFWorkbook]
+   [org.apache.poi.ss.usermodel Font]))
 
 (defn- extract-cell-value [cell]
   (let [cell-type (.. cell getCellType name)]
@@ -35,26 +35,26 @@
 (defn- extract-cell-border-style [cell]
   (let [cell-style (.getCellStyle cell)]
     {:bottom-border
-      {:style (-> cell-style .getBorderBottom borders/border-style-lookup)
-       :colour (-> cell-style .getBottomBorderColor colours/colours-lookup)}
+     {:style (-> cell-style .getBorderBottom borders/border-style-lookup)
+      :colour (-> cell-style .getBottomBorderColor colours/colours-lookup)}
      :left-border
-      {:style (-> cell-style .getBorderLeft borders/border-style-lookup)
-       :colour (-> cell-style .getLeftBorderColor colours/colours-lookup)}
+     {:style (-> cell-style .getBorderLeft borders/border-style-lookup)
+      :colour (-> cell-style .getLeftBorderColor colours/colours-lookup)}
      :right-border
-      {:style (-> cell-style .getBorderRight borders/border-style-lookup)
-       :colour (-> cell-style .getRightBorderColor colours/colours-lookup)}
+     {:style (-> cell-style .getBorderRight borders/border-style-lookup)
+      :colour (-> cell-style .getRightBorderColor colours/colours-lookup)}
      :top-border
-      {:style (-> cell-style .getBorderTop borders/border-style-lookup)
-       :colour (-> cell-style .getTopBorderColor colours/colours-lookup)}}))
+     {:style (-> cell-style .getBorderTop borders/border-style-lookup)
+      :colour (-> cell-style .getTopBorderColor colours/colours-lookup)}}))
 
 (defn- extract-cell-alignment-style [cell]
   (let [cell-style (.getCellStyle cell)]
     {:horizontal (-> cell-style
-                      .getAlignment
-                      alignments/horizontal-alignment-lookup)
-      :vertical  (-> cell-style
-                     .getVerticalAlignment
-                     alignments/vertical-alignment-lookup)}))
+                     .getAlignment
+                     alignments/horizontal-alignment-lookup)
+     :vertical  (-> cell-style
+                    .getVerticalAlignment
+                    alignments/vertical-alignment-lookup)}))
 
 (defn- extract-cell-font-style [workbook cell]
   (let [font-index (-> cell .getCellStyle .getFontIndexAsInt)
@@ -69,32 +69,32 @@
 
 (defn- prune-cell-style [cell-style]
   (into {}
-    (filter
-      (fn [[k v]] (not= v (defaults/style k)))
-      cell-style)))
+        (filter
+         (fn [[k v]] (not= v (defaults/style k)))
+         cell-style)))
 
 (defn- extract-cell-style [workbook cell]
   (let [col-index  (.getColumnIndex cell)
         cell-style (merge
-                      (extract-cell-border-style cell)
-                      (extract-cell-alignment-style cell)
-                      (extract-cell-font-style workbook cell)
-                      {:background-colour (-> cell
-                                              .getCellStyle
-                                              .getFillForegroundColor
-                                              colours/colours-lookup)
-                       :data-format       (-> cell
-                                              .getCellStyle
-                                              .getDataFormatString)
-                       :col-size          (-> cell
-                                              .getSheet
-                                              (.getColumnWidth col-index)
-                                              (/ 256.0)
-                                              int)
-                       :row-size          (-> cell
-                                              .getRow
-                                              .getHeightInPoints
-                                              int)})]
+                    (extract-cell-border-style cell)
+                    (extract-cell-alignment-style cell)
+                    (extract-cell-font-style workbook cell)
+                    {:background-colour (-> cell
+                                            .getCellStyle
+                                            .getFillForegroundColor
+                                            colours/colours-lookup)
+                     :data-format       (-> cell
+                                            .getCellStyle
+                                            .getDataFormatString)
+                     :col-size          (-> cell
+                                            .getSheet
+                                            (.getColumnWidth col-index)
+                                            (/ 256.0)
+                                            int)
+                     :row-size          (-> cell
+                                            .getRow
+                                            .getHeightInPoints
+                                            int)})]
     (prune-cell-style cell-style)))
 
 (defn- extract-poi-cells [workbook]
@@ -140,7 +140,7 @@
   (-> cell .getCellStyle .getFillPattern)
   (-> cell .getCellStyle .getFillBackgroundColor)
   (-> cell .getCellStyle .getFillForegroundColor colours/colours-lookup)
-  (count (map #(.getIndex % ) (vals colours/colours)))
+  (count (map #(.getIndex %) (vals colours/colours)))
   (count colours/colours)
 
   (def cells (-> row .iterator iterator-seq))

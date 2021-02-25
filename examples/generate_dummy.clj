@@ -97,5 +97,5 @@
               :style {}}))
 
 (fxl/write-xlsx!
-  cells
-  "test/resources/dummy-spreadsheet.xlsx")
+ cells
+ "test/resources/dummy-spreadsheet.xlsx")

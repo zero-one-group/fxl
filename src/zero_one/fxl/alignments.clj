@@ -1,6 +1,6 @@
 (ns zero-one.fxl.alignments
   (:import
-    [org.apache.poi.ss.usermodel HorizontalAlignment VerticalAlignment]))
+   [org.apache.poi.ss.usermodel HorizontalAlignment VerticalAlignment]))
 
 (def horizontal-alignments
   {:center           HorizontalAlignment/CENTER

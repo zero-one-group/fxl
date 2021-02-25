@@ -1,13 +1,13 @@
 (ns zero-one.fxl.core-test
   (:require
-    [clojure.java.io :as io]
-    [clojure.spec.alpha :as s]
-    [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.specs :as fs]
-    [zero-one.fxl.core :as fxl])
+   [clojure.java.io :as io]
+   [clojure.spec.alpha :as s]
+   [midje.sweet :refer [facts fact =>]]
+   [zero-one.fxl.specs :as fs]
+   [zero-one.fxl.core :as fxl])
   (:import
-    [java.io File FileOutputStream]
-    [org.apache.poi.xssf.usermodel XSSFWorkbook]))
+   [java.io File FileOutputStream]
+   [org.apache.poi.xssf.usermodel XSSFWorkbook]))
 
 (facts "On fxl/read-xlsx"
   (let [cells   (fxl/read-xlsx! "test/resources/dummy-spreadsheet.xlsx")
@@ -22,8 +22,8 @@
       (contains? (->> styles (map :font-size) set) 14) => true)
     (fact "Border style should be extracted"
       (contains?
-        (->> styles (map :bottom-border) set)
-        {:style :thin :colour :black1}) => true)
+       (->> styles (map :bottom-border) set)
+       {:style :thin :colour :black1}) => true)
     (fact "Alignment style should be extracted"
       (contains? (->> styles (map :vertical) set) :center) => true)
     (fact "Data formats should be extracted"

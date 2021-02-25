@@ -4,6 +4,8 @@ set -euo pipefail
 
 clj-kondo  --lint src test --cache false
 
+lein cljfmt check src test examples
+
 mkdir -p target
 lein ancient
 

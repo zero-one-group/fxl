@@ -1,10 +1,10 @@
 (ns zero-one.fxl.helpers-test
   (:require
-    [clojure.spec.alpha :as s]
-    [midje.sweet :refer [facts fact =>]]
-    [zero-one.fxl.specs :as fs]
-    [zero-one.fxl.core :as fxl]
-    [zero-one.fxl.defaults :as defaults]))
+   [clojure.spec.alpha :as s]
+   [midje.sweet :refer [facts fact =>]]
+   [zero-one.fxl.specs :as fs]
+   [zero-one.fxl.core :as fxl]
+   [zero-one.fxl.defaults :as defaults]))
 
 (facts "On fxl/->cell"
   (fact "Should fill-in the blanks"
@@ -115,7 +115,6 @@
                                         (every? vector? %))
       (fxl/cells->table cells "Sheet1") => table
       (fxl/cells->table cells "Sheet2") => empty?)))
-
 
 (facts "On fxl/records->table and fxl/records->cells"
   (let [records [{:item "Rent" :cost 1000}

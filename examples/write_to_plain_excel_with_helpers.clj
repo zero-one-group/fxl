@@ -25,9 +25,9 @@
   (assoc-in cell [:style :horizontal] :center))
 
 (fxl/write-xlsx!
-  (map align-center
-    (fxl/concat-below
-      (map (comp bold highlight) header-cells)
-      (fxl/pad-below body-cells)
-      (map bold total-cells)))
-  "examples/spreadsheets/write_to_plain_excel_with_helpers.xlsx")
+ (map align-center
+      (fxl/concat-below
+       (map (comp bold highlight) header-cells)
+       (fxl/pad-below body-cells)
+       (map bold total-cells)))
+ "examples/spreadsheets/write_to_plain_excel_with_helpers.xlsx")

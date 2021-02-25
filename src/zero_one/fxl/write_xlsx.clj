@@ -1,16 +1,16 @@
 (ns zero-one.fxl.write-xlsx
   (:require
-    [failjure.core :as f]
-    [zero-one.fxl.alignments :as alignments]
-    [zero-one.fxl.borders :as borders]
-    [zero-one.fxl.colours :as colours]
-    [zero-one.fxl.data-formats :as data-formats]
-    [zero-one.fxl.defaults :as defaults]
-    [zero-one.fxl.specs :as fs])
+   [failjure.core :as f]
+   [zero-one.fxl.alignments :as alignments]
+   [zero-one.fxl.borders :as borders]
+   [zero-one.fxl.colours :as colours]
+   [zero-one.fxl.data-formats :as data-formats]
+   [zero-one.fxl.defaults :as defaults]
+   [zero-one.fxl.specs :as fs])
   (:import
-    (java.io FileOutputStream)
-    (org.apache.poi.xssf.usermodel XSSFWorkbook)
-    (org.apache.poi.ss.usermodel FillPatternType FontUnderline)))
+   (java.io FileOutputStream)
+   (org.apache.poi.xssf.usermodel XSSFWorkbook)
+   (org.apache.poi.ss.usermodel FillPatternType FontUnderline)))
 
 ;; Apache POI Navigation
 (defn- get-or-create-sheet! [cell workbook]
@@ -91,8 +91,8 @@
 (defn- min-size [axis cells]
   (let [coord-key ({:row :row-size :col :col-size} axis)
         sizes     (->> cells
-                        (map (comp coord-key :style))
-                        (filter some?))]
+                       (map (comp coord-key :style))
+                       (filter some?))]
     (if (some #(= % :auto) sizes)
       :auto
       (apply max -1 sizes))))
@@ -104,10 +104,10 @@
 (defn- grouped-min-size [axis cells]
   (let [grouped-cells (group-by #(partial-coord axis %) cells)]
     (into {}
-      (for [[index group] grouped-cells
-            :let [min-axis-size (min-size axis group)]
-            :when (not= -1 min-axis-size)]
-        [index min-axis-size]))))
+          (for [[index group] grouped-cells
+                :let [min-axis-size (min-size axis group)]
+                :when (not= -1 min-axis-size)]
+            [index min-axis-size]))))
 
 ;; Writing to Excel
 (defn build-context! [workbook cells]
@@ -146,7 +146,7 @@
     (doall (for [[coord row-size] (:min-row-sizes context)]
              (set-row-height! workbook coord row-size)))
     (doall (for [[coord col-size] (:min-col-sizes context)]
-            (set-col-width! workbook coord col-size)))
+             (set-col-width! workbook coord col-size)))
     (.write workbook output-stream)
     (.close workbook)
     {:workbook workbook :output-stream output-stream}))
@@ -159,4 +159,4 @@
 (defn write-xlsx! [cells path]
   (f/attempt-all [cells  (conform-cells cells)
                   result (f/try* (throwable-write-xlsx! cells path))]
-    result))
+                 result))
