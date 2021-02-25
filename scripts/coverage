@@ -5,4 +5,5 @@ lein cloverage \
     --codecov \
     --html \
     --runner :midje \
-    --ns-exclude-regex "zero-one.fxl.google-sheets"
+    --ns-exclude-regex "zero-one.fxl.google-sheets" \
+    --exclude-call "clojure.spec.alpha/keys"

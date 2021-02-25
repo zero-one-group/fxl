@@ -11,10 +11,27 @@
 (def max-cols (int 1e4))
 (s/def ::row (s/and nat-int? #(<= % max-rows)))
 (s/def ::col (s/and nat-int? #(<= % max-cols)))
+;; For merged cells
+(s/def ::first-row (s/and nat-int? #(<= % max-rows)))
+(s/def ::first-col (s/and nat-int? #(<= % max-cols)))
+(s/def ::last-row (s/and nat-int? #(<= % max-rows)))
+(s/def ::last-col (s/and nat-int? #(<= % max-cols)))
 (s/def ::sheet string?)
-(s/def ::coord
+
+(s/def ::plain-coord
   (s/keys :req-un [::row ::col]
           :opt-un [::sheet]))
+
+(s/def ::merged-coord
+  (s/and
+   (s/keys :req-un [::first-row ::first-col ::last-row ::last-col]
+           :opt-un [::sheet])
+   #(<= (:first-row %) (:last-row %))
+   #(<= (:first-col %) (:last-col %))))
+
+(s/def ::coord
+  (s/or :merged ::merged-coord 
+        :plain ::plain-coord))
 
 ;; Cell Style
 ;;;; Font Style

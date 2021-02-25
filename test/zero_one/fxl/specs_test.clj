@@ -24,6 +24,23 @@
   (fact "Should not allow negative coords"
     (fs/invalid? ::fs/coord {:row -1 :col 0}) => true))
 
+(facts "On fxl merged coord"
+  (fact "Should allow merged cell"
+    (fs/valid? ::fs/merged-coord {:first-row 0 :first-col 1
+                                  :last-row 1 :last-col 2}) => true)
+  (fact "Should allow merged cell w sheet"
+    (fs/valid? ::fs/merged-coord {:first-row 0 :first-col 1
+                                  :last-row 1 :last-col 2
+                                  :sheet "ABC"}) => true)
+  (fact "Should not allow negative merged cell area"
+    (fs/invalid? ::fs/merged-coord {:first-row 1 :first-col 1
+                                    :last-row 0 :last-col 0
+                                    :sheet "ABC"}) => true)
+  (fact "Should not allow only row and col"
+    (fs/invalid? ::fs/merged-coord {:first-row 0 :first-col 0}) => true)
+  (fact "Should not allow only lrow and lcol"
+    (fs/invalid? ::fs/merged-coord {:last-row 0 :last-col 0}) => true))
+
 (facts "On fxl data formats"
   (fact "Should allow example format"
     (fs/valid? ::fs/data-format "[h]:mm:ss") => true)

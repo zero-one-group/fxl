@@ -10,7 +10,8 @@
   (:import
     (java.io FileOutputStream)
     (org.apache.poi.xssf.usermodel XSSFWorkbook)
-    (org.apache.poi.ss.usermodel FillPatternType FontUnderline)))
+    (org.apache.poi.ss.usermodel FillPatternType FontUnderline)
+    (org.apache.poi.ss.util CellRangeAddress)))
 
 ;; Apache POI Navigation
 (defn- get-or-create-sheet! [cell workbook]
@@ -19,12 +20,14 @@
         (.createSheet workbook sheet-name))))
 
 (defn- get-or-create-row! [cell xl-sheet]
-  (let [row-index (-> cell :coord :row)]
+  (let [row-index (or (-> cell :coord :row)
+                      (-> cell :coord :first-row))]
     (or (.getRow xl-sheet row-index)
         (.createRow xl-sheet row-index))))
 
 (defn- get-or-create-cell! [cell xl-row]
-  (let [col-index (-> cell :coord :col)]
+  (let [col-index (or (-> cell :coord :col)
+                      (-> cell :coord :first-col))]
     (or (.getCell xl-row col-index)
         (.createCell xl-row col-index))))
 
@@ -115,6 +118,21 @@
    :min-col-sizes (grouped-min-size :col cells)
    :cell-styles   (reduce #(accumulate-style-cache! workbook %1 %2) {} cells)})
 
+(defn- create-merged-region! [cell sheet]
+  (let [first-row (-> cell :coord :first-row)
+        first-col (-> cell :coord :first-col)
+        last-row  (-> cell :coord :last-row)
+        last-col  (-> cell :coord :last-col)
+        cell-range-address (CellRangeAddress.
+                             first-row last-row
+                             first-col last-col)]
+    (.addMergedRegion sheet cell-range-address)))
+
+(defn merged-cell? [cell]
+  (let [coord (:coord cell)]
+    (and (contains? coord :last-row)
+      (contains? coord :last-col))))
+
 (defn- set-cell-value-and-style! [context workbook cell]
   (let [sheet     (get-or-create-sheet! cell workbook)
         row       (get-or-create-row! cell sheet)
@@ -122,10 +140,12 @@
         style     ((:cell-styles context) (:style cell))]
     (.setCellValue poi-cell (ensure-settable (:value cell)))
     (.setCellFormula poi-cell (:formula cell))
-    (.setCellStyle poi-cell style)))
+    (.setCellStyle poi-cell style)
+    (when (merged-cell? cell)
+      (create-merged-region! cell sheet))))
 
 (defn- set-row-height! [workbook coord row-size]
-  (let [row-index (:row coord)
+  (let [row-index (or (:row coord) (:first-row coord))
         sheet     (.getSheet workbook (:sheet coord))
         row       (.getRow sheet row-index)]
     (.setHeightInPoints row (float row-size))))

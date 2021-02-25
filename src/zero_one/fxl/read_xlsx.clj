@@ -104,20 +104,51 @@
          (mapcat ->seq)
          (mapcat ->seq))))
 
-(defn- poi-cell->fxl-cell [workbook poi-cell]
-  (let [poi-row (.getRow poi-cell)]
-    {:coord {:row   (.getRowNum poi-row)
-             :col   (.getColumnIndex poi-cell)
-             :sheet (.. poi-row getSheet getSheetName)}
-     :value   (extract-cell-value poi-cell)
-     :formula (extract-cell-formula poi-cell)
-     :style   (extract-cell-style workbook poi-cell)}))
+(defn- extract-cell-coord [merged-cell-index poi-cell]
+  (let [common {:row (.getRowIndex poi-cell)
+                :col  (.getColumnIndex poi-cell)
+                :sheet (.. poi-cell getSheet getSheetName)}]
+    (if (contains? merged-cell-index common)
+      (get merged-cell-index common)
+      common)))
+
+(defn- poi-cell->fxl-cell [merged-cell-index workbook poi-cell]
+  {:coord   (extract-cell-coord merged-cell-index poi-cell)
+   :value   (extract-cell-value poi-cell)
+   :formula (extract-cell-formula poi-cell)
+   :style   (extract-cell-style workbook poi-cell)})
+
+(defn- sheet->merged-cell-index [sheet]
+  (let [merged-cells (.getMergedRegions sheet)
+        sheet-name   (.getSheetName sheet)]
+    (->> merged-cells
+         (map #(hash-map {:row       (.getFirstRow %)
+                          :col       (.getFirstColumn %)
+                          :sheet     sheet-name}
+                         {:first-row (.getFirstRow %)
+                          :first-col (.getFirstColumn %)
+                          :last-row  (.getLastRow %)
+                          :last-col  (.getLastColumn %)
+                          :sheet     sheet-name}))
+         (into {}))))
+
+(defn- extract-merged-cell-index [workbook]
+  (let [sheets (->> (range (.getNumberOfSheets workbook))
+                    (map #(.getSheetName workbook %))
+                    (map #(.getSheet workbook %)))]
+    (->> sheets
+         (map sheet->merged-cell-index)
+         (into {}))))
+
+(defn- extract-fxl-cells [workbook poi-cells]
+  (let [index (extract-merged-cell-index workbook)]
+    (map #(poi-cell->fxl-cell index workbook %) poi-cells)))
 
 (defn- throwable-read-xlsx! [path]
   (let [input-stream (FileInputStream. path)
         workbook     (XSSFWorkbook. input-stream)
         poi-cells    (extract-poi-cells workbook)
-        cells        (map #(poi-cell->fxl-cell workbook %) poi-cells)]
+        cells        (extract-fxl-cells workbook poi-cells)]
     (.close workbook)
     cells))
 
