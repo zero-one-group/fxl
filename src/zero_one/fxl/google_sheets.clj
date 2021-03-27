@@ -4,11 +4,11 @@
   (:import
    (com.google.api.client.googleapis.auth.oauth2 GoogleCredential)
    (com.google.api.client.googleapis.javanet GoogleNetHttpTransport)
-   (com.google.api.client.json.jackson2 JacksonFactory)
+   (com.google.api.client.json.gson GsonFactory)
    (com.google.api.services.sheets.v4 SheetsScopes
                                       Sheets$Builder)))
 
-(def json-factory (JacksonFactory/getDefaultInstance))
+(def json-factory (GsonFactory/getDefaultInstance))
 
 (def http-transport (GoogleNetHttpTransport/newTrustedTransport))
 
