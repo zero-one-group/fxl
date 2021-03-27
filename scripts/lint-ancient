@@ -6,8 +6,10 @@ clj-kondo  --lint src test --cache false
 
 lein cljfmt check src test examples
 
-mkdir -p target
-lein ancient
-
-mkdir -p target
-lein ancient :plugins
+# Ancient
+# NOTE: temporarily disabled until active development period
+# mkdir -p target
+# lein ancient
+#
+# mkdir -p target
+# lein ancient :plugins
