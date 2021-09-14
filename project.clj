@@ -1,4 +1,4 @@
-(defproject zero.one/fxl "0.0.6"
+(defproject zero.one/fxl "0.0.7"
   :description "fxl is a Clojure spreadsheet library."
   :url "https://gitlab.com/zero-one-open-source/fxl"
   :license {:name "Apache License"
