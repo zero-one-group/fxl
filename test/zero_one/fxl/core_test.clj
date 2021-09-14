@@ -73,7 +73,7 @@
                      {:coord {:row 2 :col 0 :sheet "S2"} :value 3.14
                       :style {:data-format "@"}}
                      {:coord {:row 2 :col 1 :sheet "S2"} :value 2.71
-                      :style {:data-format "non-builtin"}}
+                      :style {:data-format "user-defined"}}
                      {:coord {:row 3 :col 0 :sheet "S2"} :value true
                       :style {:row-size 10}}
                      {:coord {:row 3 :col 1 :sheet "S2"} :value false
@@ -116,9 +116,9 @@
     (fact "Data formats should be preserved"
       (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
         (contains? data-formats "@") => true))
-    (fact "Non-builtin data format should be dropped"
+    (fact "User-defined data format should be preserved"
       (let [data-formats (->> read-cells (map (comp :data-format :style)) set)]
-        (contains? data-formats "non-builtin") => false)))
+        (contains? data-formats "user-defined") => true)))
   (let [write-cells [{:coord {:row 0 :col 0} :value 12345 :style {}}
                      {:coord {:row 0 :col 0} :value "abc" :style {}}]
         read-cells  (write-then-read-xlsx! write-cells)]

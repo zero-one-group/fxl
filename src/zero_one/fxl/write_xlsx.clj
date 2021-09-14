@@ -4,7 +4,6 @@
    [zero-one.fxl.alignments :as alignments]
    [zero-one.fxl.borders :as borders]
    [zero-one.fxl.colours :as colours]
-   [zero-one.fxl.data-formats :as data-formats]
    [zero-one.fxl.defaults :as defaults]
    [zero-one.fxl.specs :as fs])
   (:import
@@ -35,7 +34,8 @@
 
 ;; Cell Style and Font
 (defn- create-cell-style! [workbook cell]
-  (let [style (.createCellStyle workbook)]
+  (let [style (.createCellStyle workbook)
+        styled-format (.createDataFormat workbook)]
     (when-let [horizontal (-> cell :style :horizontal)]
       (.setAlignment style (alignments/horizontal-alignments horizontal)))
     (when-let [vertical (-> cell :style :vertical)]
@@ -56,7 +56,7 @@
       (.setFillForegroundColor style (-> background colours/colours .getIndex))
       (.setFillPattern style FillPatternType/SOLID_FOREGROUND))
     (when-let [data-format (-> cell :style :data-format)]
-      (when-let [index (data-formats/data-format-lookup data-format)]
+      (when-let [index (.getFormat styled-format data-format)]
         (.setDataFormat style index)))
     style))
 
